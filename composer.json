@@ -1,0 +1,25 @@
+{
+  "name": "caponica/amazon-rainforest",
+  "type": "library",
+  "license": "MIT",
+  "description": "Simplified access the Amazon Rainforest API",
+  "keywords": ["amazon", "rainforest api", "amazon api"],
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Christian Morgan, Caponica",
+      "homepage": "https://github.com/caponica"
+    }
+  ],
+
+  "require": {
+    "php": ">=5.4.0",
+    "guzzlehttp/guzzle" : "^6.2"
+  },
+
+  "autoload": {
+    "psr-0": {
+      "CaponicaAmazonRainforest\\": "src/"
+    }
+  }
+}
