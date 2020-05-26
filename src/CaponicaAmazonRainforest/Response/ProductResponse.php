@@ -9,37 +9,87 @@ namespace CaponicaAmazonRainforest\Response;
  */
 class ProductResponse
 {
+    const MAIN_KEY_PRODUCT              = 'product';
+
     const MAIN_KEY_REQUEST_INFO         = 'request_info';
     const MAIN_KEY_REQUEST_METADATA     = 'request_metadata';
     const MAIN_KEY_REQUEST_PARAMETERS   = 'request_parameters';
-    const MAIN_KEY_PRODUCT              = 'product';
+
+    const MAIN_KEY_ALSO_BOUGHT          = 'also_bought';
+    const MAIN_KEY_ALSO_VIEWED          = 'also_viewed';
+    const MAIN_KEY_FREQUENTLY_BOUGHT    = 'frequently_bought_together';
+    const MAIN_KEY_SPONSORED_PRODUCTS   = 'sponsored_products';
+    const MAIN_KEY_TRACK_LIST           = 'track_list';
+    const MAIN_KEY_VIEW_TO_PURCHASE     = 'view_to_purchase';
 
     const WEIGHT_CONVERT_OZ_TO_LB       = 0.0625;
     const WEIGHT_CONVERT_KG_TO_LB       = 2.2046;
     const WEIGHT_CONVERT_G_TO_LB        = 0.0022046;
     const LENGTH_CONVERT_CM_TO_IN       = 0.393701;
 
-    private $data;
-    private $reqInfo;
-    private $reqMeta;
-    private $reqParams;
-    private $product;
+    private $data = null;
+    private $product = null;
+
+    private $reqInfo = null;
+    private $reqMeta = null;
+    private $reqParams = null;
+
+    private $alsoBought = null;
+    private $alsoViewed = null;
+    private $fbt = null;
+    private $sponsoredProducts = null;
+    private $trackList = null;
+    private $viewToPurchase = null;
 
     public function __construct($rfData)
     {
         $this->data = $rfData;
-        $this->reqInfo      = &$this->data[self::MAIN_KEY_REQUEST_INFO];
-        $this->reqMeta      = &$this->data[self::MAIN_KEY_REQUEST_METADATA];
-        $this->reqParams    = &$this->data[self::MAIN_KEY_REQUEST_PARAMETERS];
-        $this->product      = &$this->data[self::MAIN_KEY_PRODUCT];
+
+        // main product data:
+        $this->product              = &$this->data[self::MAIN_KEY_PRODUCT];
+
+        // omnipresent data:
+        $this->reqInfo              = &$this->data[self::MAIN_KEY_REQUEST_INFO];
+        $this->reqMeta              = &$this->data[self::MAIN_KEY_REQUEST_METADATA];
+        $this->reqParams            = &$this->data[self::MAIN_KEY_REQUEST_PARAMETERS];
+
+        // occasional data:
+        if (isset($this->data[self::MAIN_KEY_ALSO_BOUGHT])) {
+            $this->alsoBought           = &$this->data[self::MAIN_KEY_ALSO_BOUGHT];
+        }
+        if (isset($this->data[self::MAIN_KEY_ALSO_VIEWED])) {
+            $this->alsoViewed           = &$this->data[self::MAIN_KEY_ALSO_VIEWED];
+        }
+        if (isset($this->data[self::MAIN_KEY_FREQUENTLY_BOUGHT])) {
+            $this->fbt                  = &$this->data[self::MAIN_KEY_FREQUENTLY_BOUGHT];
+        }
+        if (isset($this->data[self::MAIN_KEY_SPONSORED_PRODUCTS])) {
+            $this->sponsoredProducts    = &$this->data[self::MAIN_KEY_SPONSORED_PRODUCTS];
+        }
+        if (isset($this->data[self::MAIN_KEY_TRACK_LIST])) {
+            $this->trackList            = &$this->data[self::MAIN_KEY_TRACK_LIST];
+        }
+        if (isset($this->data[self::MAIN_KEY_VIEW_TO_PURCHASE])) {
+            $this->viewToPurchase       = &$this->data[self::MAIN_KEY_VIEW_TO_PURCHASE];
+        }
     }
 
     public static function getMainKeys() {
         return [
             self::MAIN_KEY_PRODUCT,
-            self::MAIN_KEY_REQUEST_PARAMETERS,
-            self::MAIN_KEY_REQUEST_METADATA,
             self::MAIN_KEY_REQUEST_INFO,
+            self::MAIN_KEY_REQUEST_METADATA,
+            self::MAIN_KEY_REQUEST_PARAMETERS,
+        ];
+    }
+    public static function getOccasionalKeys() {
+        return [
+            self::MAIN_KEY_ALSO_BOUGHT,
+            self::MAIN_KEY_ALSO_VIEWED,
+            self::MAIN_KEY_FREQUENTLY_BOUGHT,
+            self::MAIN_KEY_SPONSORED_PRODUCTS,
+            self::MAIN_KEY_TRACK_LIST,
+            self::MAIN_KEY_VIEW_TO_PURCHASE,
         ];
     }
 
@@ -49,12 +99,76 @@ class ProductResponse
         }
         return $this->product[$key];
     }
+    public function getReqInfo($key, $valueIfMissing=null) {
+        if (empty($this->reqInfo[$key])) {
+            return $valueIfMissing;
+        }
+        return $this->reqInfo[$key];
+    }
+    public function getReqMeta($key, $valueIfMissing=null) {
+        if (empty($this->reqMeta[$key])) {
+            return $valueIfMissing;
+        }
+        return $this->reqMeta[$key];
+    }
+    public function getReqParam($key, $valueIfMissing=null) {
+        if (empty($this->reqParams[$key])) {
+            return $valueIfMissing;
+        }
+        return $this->reqParams[$key];
+    }
 
-    public function getMarketplaceSuffix() {
-        if (empty($this->reqParams['amazon_domain'])) {
+    public function getAlsoBought() {
+        if (empty($this->alsoBought)) {
             return null;
         }
-        $marketplaceDomain = $this->reqParams['amazon_domain'];
+        return $this->alsoBought;
+    }
+    public function getAlsoViewed() {
+        if (empty($this->alsoViewed)) {
+            return null;
+        }
+        return $this->alsoViewed;
+    }
+    public function getFrequentlyBoughtTogether() {
+        if (empty($this->fbt)) {
+            return null;
+        }
+        return $this->fbt;
+    }
+    public function getSponsoredProducts() {
+        if (empty($this->sponsoredProducts)) {
+            return null;
+        }
+        return $this->sponsoredProducts;
+    }
+    public function getTrackList() {
+        if (empty($this->trackList)) {
+            return null;
+        }
+        return $this->trackList;
+    }
+    public function getViewToPurchase() {
+        if (empty($this->viewToPurchase)) {
+            return null;
+        }
+        return $this->viewToPurchase;
+    }
+
+    /**
+     * If all else fails and there's no other way to access a field you need then you can access the whole data tree,
+     * you should normally be able to use one of the methods above to access the data you need, e.g. getProductField(x) or getTrackList()
+     *
+     * @return array
+     */
+    public function getDataAsLastResort() {
+        return $this->data;
+    }
+
+    public function getMarketplaceSuffix() {
+        if (is_null($marketplaceDomain = $this->getReqParam('amazon_domain'))) {
+            return null;
+        }
         $dotPosition = strpos($marketplaceDomain, '.');
         if (1 > $dotPosition) {
             return null;

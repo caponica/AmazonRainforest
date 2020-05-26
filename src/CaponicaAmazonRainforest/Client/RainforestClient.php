@@ -2,6 +2,7 @@
 
 namespace CaponicaAmazonRainforest\Client;
 
+use CaponicaAmazonRainforest\Entity\RainforestProduct;
 use CaponicaAmazonRainforest\Response\ProductResponse;
 use CaponicaAmazonRainforest\Service\LoggerService;
 use GuzzleHttp\Client;
@@ -37,7 +38,7 @@ class RainforestClient
     private $apiKey;
 
     /**
-     * @param array $config
+     * @param array $config             Must include "api_key" with value.
      * @param LoggerInterface $logger
      */
     public function __construct($config, LoggerInterface $logger = null) {
@@ -97,12 +98,13 @@ class RainforestClient
     }
 
     /**
-     * @param string $asin              The ASIN to retrieve
-     * @param string $amazonDomain      One of the AMAZON_SITE_XYZ constants
-     * @return ProductResponse|null
+     * @param string $asin                  The ASIN to retrieve
+     * @param string $amazonDomain          One of the AMAZON_SITE_XYZ constants
+     * @param RainforestProduct $rfProduct  If set then this object will be updated from the response, instead of creating a new one
+     * @return RainforestProduct|null
      * @throws \Exception
      */
-    public function retrieveProductDataForAsinOnSite($asin, $amazonDomain) {
+    public function retrieveProductForAsinOnSite($asin, $amazonDomain, RainforestProduct $rfProduct=null) {
         if (!$this->isValidAmazonSite($amazonDomain)) {
             $this->logMessage("Invalid Amazon site provided: $amazonDomain", LoggerService::ERROR);
             return null;
@@ -114,7 +116,12 @@ class RainforestClient
             return null;
         }
 
-        return $rfProductResponse;
+        if (empty($rfProduct)) {
+            $rfProduct = new RainforestProduct();
+        }
+        $rfProduct->updateFromRainforestResponse($rfProductResponse);
+
+        return $rfProduct;
     }
 
     /**
