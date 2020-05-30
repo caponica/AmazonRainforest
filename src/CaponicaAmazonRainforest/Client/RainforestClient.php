@@ -1,12 +1,13 @@
-<?php
+<?php /** @noinspection PhpUndefinedClassInspection */
 
 namespace CaponicaAmazonRainforest\Client;
 
 use CaponicaAmazonRainforest\Entity\RainforestProduct;
+use CaponicaAmazonRainforest\Entity\SiteAsin;
 use CaponicaAmazonRainforest\Response\ProductResponse;
 use CaponicaAmazonRainforest\Service\LoggerService;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Promise;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
@@ -98,60 +99,96 @@ class RainforestClient
     }
 
     /**
-     * @param string $asin                  The ASIN to retrieve
-     * @param string $amazonDomain          One of the AMAZON_SITE_XYZ constants
-     * @param RainforestProduct $rfProduct  If set then this object will be updated from the response, instead of creating a new one
+     * Checks and de-duplicates an array of SiteAsins. Returns an array of SiteAsins indexed by getKey()
+     *
+     * @param SiteAsin[] $siteAsins     Array keys are ignored from the input array (and are not needed)
+     * @return array
+     */
+    public function prepareSiteAsinArray($siteAsins) {
+        if (!is_array($siteAsins)) {
+            $siteAsins = [ $siteAsins ];
+        }
+
+        $cleanArray = [];
+        foreach ($siteAsins as $siteAsin) {
+            if (!$this->isValidAmazonSite($siteAsin->getSite())) {
+                $this->logMessage("Removed SiteAsin with invalid Amazon site: $siteAsin", LoggerService::ERROR);
+                continue;
+            }
+
+            $cleanArray[$siteAsin->getKey()] = $siteAsin;
+        }
+
+        return $cleanArray;
+    }
+
+
+    /**
+     * @param SiteAsin|SiteAsin[] $siteAsins                        The SiteAsins to retrieve. Can also provide a single SiteAsin.
+     * @param RainforestProduct|RainforestProduct[] $rfProducts     Array of RainforestProducts indexed by getKey(). If set then these objects
+     *                                                              will be updated from the response, instead of creating new ones.
      * @return RainforestProduct|null
      * @throws \Exception
      */
-    public function retrieveProductForAsinOnSite($asin, $amazonDomain, RainforestProduct $rfProduct=null) {
-        if (!$this->isValidAmazonSite($amazonDomain)) {
-            $this->logMessage("Invalid Amazon site provided: $amazonDomain", LoggerService::ERROR);
-            return null;
+    public function retrieveProductForSiteAsins($siteAsins, $rfProducts=null) {
+        if (!is_array($siteAsins) && $siteAsins instanceof SiteAsin) {
+            $siteAsins = [ $siteAsins->getKey() => $siteAsins ];
         }
 
-        // retrieve using API
-        $rfProductResponse = $this->fetchProductDataForAsinOnSite($asin, $amazonDomain);
-        if (empty($rfProductResponse)) {
-            return null;
+        if (empty($rfProducts)) {
+            $rfProducts = [];
+        } elseif (!is_array($rfProducts) && $rfProducts instanceof RainforestProduct) {
+            $rfProducts = [ $rfProducts->getKey() => $rfProducts ];
         }
 
-        if (empty($rfProduct)) {
-            $rfProduct = new RainforestProduct();
-        }
-        $rfProduct->updateFromRainforestResponse($rfProductResponse);
+        $rfProductResponses = $this->fetchProductDataForSiteAsins($siteAsins);
 
-        return $rfProduct;
+        foreach ($siteAsins as $siteAsin) {
+            if (empty($rfProductResponses[$siteAsin->getKey()])) {
+                continue;
+            }
+
+            if (empty($rfProducts[$siteAsin->getKey()])) {
+                $rfProducts[$siteAsin->getKey()] = new RainforestProduct();
+            }
+            $rfProducts[$siteAsin->getKey()]->updateFromRainforestResponse($rfProductResponses[$siteAsin->getKey()]);
+        }
+
+        return $rfProducts;
     }
-
     /**
-     * @param string $asin
-     * @param string $amazonDomain
-     * @return ProductResponse
+     * @param SiteAsin[] $siteAsins
+     * @return ProductResponse[]
      * @throws \Exception
      */
-    private function fetchProductDataForAsinOnSite($asin, $amazonDomain) {
-        $queryString = http_build_query([
-            'type'          => 'product',
-            'api_key'       => $this->apiKey,
-            'amazon_domain' => $amazonDomain,
-            'asin'          => $asin,
-        ]);
-
+    private function fetchProductDataForSiteAsins($siteAsins) {
         $client = new Client();
-        try {
-            $response = $client->request('GET', sprintf('https://api.rainforestapi.com/request?%s', $queryString));
-            $data = $this->validateResponseAndReturnData($response);
-            $rfProduct = new ProductResponse($data);
-        } catch (GuzzleException $e) {
-            $this->logMessage('ERROR: Guzzle Exception trying to retrieve data from Rainforest API. Message: ' . $e->getMessage(), LoggerService::ERROR);
-            throw new \Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
-        } catch (\Exception $e) {
-            $this->logMessage('ERROR: General Exception trying to retrieve data from Rainforest API. Message: ' . $e->getMessage(), LoggerService::ERROR);
-            throw $e;
+        $requests = [];
+        $rfProductResponses = [];
+
+        foreach ($siteAsins as $siteAsin) {
+            $queryString = http_build_query([
+                'type'          => 'product',
+                'api_key'       => $this->apiKey,
+                'amazon_domain' => $siteAsin->getSite(),
+                'asin'          => $siteAsin->getAsin(),
+            ]);
+
+            $this->logMessage("Requesting product data from API for {$siteAsin->getKey()}", LoggerService::DEBUG);
+            $requests[$siteAsin->getKey()] = $client->getAsync(sprintf('https://api.rainforestapi.com/request?%s', $queryString));
         }
 
-        return $rfProduct;
+        $responses = Promise\settle($requests)->wait();
+        foreach ($responses as $key => $response) {
+            try {
+                $data = $this->validateResponseAndReturnData($response);
+                $rfProductResponses[$key] = new ProductResponse($data);
+            } catch (\Exception $e) {
+                $this->logMessage("Could not extract Product data from response {$key}. Message: " . $e->getMessage(), LoggerService::ERROR);
+            }
+        }
+
+        return $rfProductResponses;
     }
 
     /**
@@ -160,6 +197,14 @@ class RainforestClient
      * @throws \Exception
      */
     private function validateResponseAndReturnData($response) {
+        if (is_array($response) && array_key_exists('state', $response)) {
+            if (Promise\PromiseInterface::FULFILLED === $response['state']) {
+                $response = $response['value'];
+            } elseif (array_key_exists('reason', $response) && $response['reason'] instanceof \Exception) {
+                throw $response['reason'];
+            }
+        }
+
         $responseCode = $response->getStatusCode();
         if ($responseCode !== 200) {
             throw new \Exception("Rainforest request failed. HTTP response was $responseCode. See https://rainforestapi.com/docs/response-codes for more details.");
