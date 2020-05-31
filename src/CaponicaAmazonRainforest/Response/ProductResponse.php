@@ -7,13 +7,11 @@ namespace CaponicaAmazonRainforest\Response;
  *
  * @package CaponicaAmazonRainforest\Response
  */
-class ProductResponse
+class ProductResponse extends CommonResponse
 {
-    const MAIN_KEY_PRODUCT              = 'product';
+    const CLASS_NAME = 'CaponicaAmazonRainforest\\Response\\ProductResponse';
 
-    const MAIN_KEY_REQUEST_INFO         = 'request_info';
-    const MAIN_KEY_REQUEST_METADATA     = 'request_metadata';
-    const MAIN_KEY_REQUEST_PARAMETERS   = 'request_parameters';
+    const MAIN_KEY_PRODUCT              = 'product';
 
     const MAIN_KEY_ALSO_BOUGHT          = 'also_bought';
     const MAIN_KEY_ALSO_VIEWED          = 'also_viewed';
@@ -27,12 +25,7 @@ class ProductResponse
     const WEIGHT_CONVERT_G_TO_LB        = 0.0022046;
     const LENGTH_CONVERT_CM_TO_IN       = 0.393701;
 
-    private $data = null;
     private $product = null;
-
-    private $reqInfo = null;
-    private $reqMeta = null;
-    private $reqParams = null;
 
     private $alsoBought = null;
     private $alsoViewed = null;
@@ -43,15 +36,10 @@ class ProductResponse
 
     public function __construct($rfData)
     {
-        $this->data = $rfData;
+        parent::__construct($rfData);
 
         // main product data:
         $this->product              = &$this->data[self::MAIN_KEY_PRODUCT];
-
-        // omnipresent data:
-        $this->reqInfo              = &$this->data[self::MAIN_KEY_REQUEST_INFO];
-        $this->reqMeta              = &$this->data[self::MAIN_KEY_REQUEST_METADATA];
-        $this->reqParams            = &$this->data[self::MAIN_KEY_REQUEST_PARAMETERS];
 
         // occasional data:
         if (isset($this->data[self::MAIN_KEY_ALSO_BOUGHT])) {
@@ -75,12 +63,9 @@ class ProductResponse
     }
 
     public static function getMainKeys() {
-        return [
-            self::MAIN_KEY_PRODUCT,
-            self::MAIN_KEY_REQUEST_INFO,
-            self::MAIN_KEY_REQUEST_METADATA,
-            self::MAIN_KEY_REQUEST_PARAMETERS,
-        ];
+        $keys = parent::getMainKeys();
+        $keys[] = self::MAIN_KEY_PRODUCT;
+        return $keys;
     }
     public static function getOccasionalKeys() {
         return [
@@ -98,24 +83,6 @@ class ProductResponse
             return $valueIfMissing;
         }
         return $this->product[$key];
-    }
-    public function getReqInfo($key, $valueIfMissing=null) {
-        if (empty($this->reqInfo[$key])) {
-            return $valueIfMissing;
-        }
-        return $this->reqInfo[$key];
-    }
-    public function getReqMeta($key, $valueIfMissing=null) {
-        if (empty($this->reqMeta[$key])) {
-            return $valueIfMissing;
-        }
-        return $this->reqMeta[$key];
-    }
-    public function getReqParam($key, $valueIfMissing=null) {
-        if (empty($this->reqParams[$key])) {
-            return $valueIfMissing;
-        }
-        return $this->reqParams[$key];
     }
 
     public function getAlsoBought() {
@@ -153,27 +120,6 @@ class ProductResponse
             return null;
         }
         return $this->viewToPurchase;
-    }
-
-    /**
-     * If all else fails and there's no other way to access a field you need then you can access the whole data tree,
-     * you should normally be able to use one of the methods above to access the data you need, e.g. getProductField(x) or getTrackList()
-     *
-     * @return array
-     */
-    public function getDataAsLastResort() {
-        return $this->data;
-    }
-
-    public function getMarketplaceSuffix() {
-        if (is_null($marketplaceDomain = $this->getReqParam('amazon_domain'))) {
-            return null;
-        }
-        $dotPosition = strpos($marketplaceDomain, '.');
-        if (1 > $dotPosition) {
-            return null;
-        }
-        return substr($marketplaceDomain, $dotPosition+1);
     }
 
     public function getFirstAvailableDate() {

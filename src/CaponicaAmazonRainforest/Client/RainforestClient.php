@@ -2,8 +2,13 @@
 
 namespace CaponicaAmazonRainforest\Client;
 
+use CaponicaAmazonRainforest\Entity\RainforestEntityCommon;
 use CaponicaAmazonRainforest\Entity\RainforestProduct;
+use CaponicaAmazonRainforest\Request\CategoryRequest;
+use CaponicaAmazonRainforest\Request\CommonRequest;
 use CaponicaAmazonRainforest\Request\ProductRequest;
+use CaponicaAmazonRainforest\Response\CategoryResponse;
+use CaponicaAmazonRainforest\Response\CommonResponse;
 use CaponicaAmazonRainforest\Response\ProductResponse;
 use CaponicaAmazonRainforest\Service\LoggerService;
 use GuzzleHttp\Client;
@@ -33,6 +38,7 @@ class RainforestClient
     const AMAZON_SITE_UK            = 'amazon.co.uk';
     const AMAZON_SITE_USA           = 'amazon.com';
 
+    const REQUEST_TYPE_CATEGORY     = 'category';
     const REQUEST_TYPE_PRODUCT      = 'product';
 
     /** @var LoggerInterface $logger */
@@ -101,9 +107,9 @@ class RainforestClient
     }
 
     /**
-     * Checks and de-duplicates an array of ProductRequests. Returns an array of Requests indexed by getKey()
+     * Checks and de-duplicates an array of CommonRequests. Returns an array of Requests indexed by getKey()
      *
-     * @param ProductRequest[] $requests    Array keys are ignored from the input array (and are not needed)
+     * @param CommonRequest[] $requests    Array keys are ignored from the input array (and are not needed)
      * @return array
      */
     public function prepareRequestArray($requests) {
@@ -120,43 +126,85 @@ class RainforestClient
     }
 
     /**
+     * @param CategoryRequest|CategoryRequest[] $requests           The CategoryRequest(s) to process and retrieve.
+     * @param RainforestCategory|RainforestCategory[] $rfCats       RainforestCategory object (or Array indexed by getKey()).
+     *                                                              If set then they will be updated from the response,
+     *                                                              instead of creating new ones.
+     * @return RainforestCategory[]
+     * @throws \Exception
+     */
+    public function retrieveCategories($requests, $rfCats=null) {
+        /** @var RainforestCategory[] $cats*/
+        $cats = $this->retrieveObjects(CategoryRequest::getReflectionArray(), $requests, $rfCats);
+        return $cats;
+    }
+    /**
      * @param ProductRequest|ProductRequest[] $requests             The ProductRequest(s) to process and retrieve.
-     * @param RainforestProduct|RainforestProduct[] $rfProducts     Array of RainforestProducts indexed by getKey(). If set then these objects
-     *                                                              will be updated from the response, instead of creating new ones.
-     * @return RainforestProduct|null
+     * @param RainforestProduct|RainforestProduct[] $rfProducts     RainforestProduct object (or Array indexed by getKey()).
+     *                                                              If set then they will be updated from the response,
+     *                                                              instead of creating new ones.
+     * @return RainforestProduct[]
      * @throws \Exception
      */
     public function retrieveProducts($requests, $rfProducts=null) {
+        /** @var RainforestProduct[] $products */
+        $products = $this->retrieveObjects(ProductRequest::getReflectionArray(), $requests, $rfProducts);
+        return $products;
+    }
+    /**
+     * @param array $reflectionArray
+     * @param CommonRequest|CommonRequest[] $requests   The CommonRequest(s) to process and retrieve.
+     * @param $rfObjects                                Rainforest objects (or Array indexed by getKey()). If set then they
+     *                                                  will be updated from the response, instead of creating new ones.
+     * @return RainforestEntityCommon[]
+     * @throws \Exception
+     */
+    private function retrieveObjects($reflectionArray, $requests, $rfObjects=null) {
+        $debugName = 'retrieve' . $reflectionArray['debug'] . 's';
+
         $convertedSingleParamIntoArray = false;
-        if (!is_array($requests) && $requests instanceof ProductRequest) {
+        if (!is_array($requests) && $requests instanceof $reflectionArray['requestClass']) {
             $requests = [ $requests->getKey() => $requests ];
             $convertedSingleParamIntoArray = true;
         }
 
-        if (empty($rfProducts)) {
-            $rfProducts = [];
-        } elseif (!is_array($rfProducts) && $rfProducts instanceof RainforestProduct) {
+        if (empty($rfObjects)) {
+            $rfObjects = [];
+        } elseif (!is_array($rfObjects) && $rfObjects instanceof $reflectionArray['entityClass']) {
             if ($convertedSingleParamIntoArray) {
-                $rfProducts = [ array_key_first($requests) => $rfProducts ];
+                $rfObjects = [ array_key_first($requests) => $rfObjects ];
             } else {
-                throw new \InvalidArgumentException('If you provide multiple Requests to retrieveProducts() then you cannot provide a single RainforestProduct in the second parameter');
+                throw new \InvalidArgumentException("If you provide multiple Requests to $debugName() then you cannot provide a single {$reflectionArray['entityClass']} in the second parameter");
             }
         }
 
-        $rfProductResponses = $this->fetchProductData($requests);
+        $fetcher = $reflectionArray['fetcherMethod'];
+        $rfResponses = $this->$fetcher($requests);
 
         foreach ($requests as $request) {
-            if (empty($rfProductResponses[$request->getKey()])) {
+            if (empty($rfResponses[$request->getKey()])) {
                 continue;
             }
 
-            if (empty($rfProducts[$request->getKey()])) {
-                $rfProducts[$request->getKey()] = new RainforestProduct();
+            if (empty($rfObjects[$request->getKey()])) {
+                $rfObjects[$request->getKey()] = new $reflectionArray['entityClass']();
             }
-            $rfProducts[$request->getKey()]->updateFromRainforestResponse($rfProductResponses[$request->getKey()]);
+            $rfObjects[$request->getKey()]->updateFromRainforestResponse($rfResponses[$request->getKey()]);
         }
 
-        return $rfProducts;
+        return $rfObjects;
+    }
+
+    /**
+     * @param CategoryRequest[] $requests
+     * @return CategoryResponse[]
+     * @throws \Exception
+     */
+    private function fetchCategoryData($requests) {
+        /** @var CategoryResponse[] $response */
+        $response = $this->fetchResponsesFromApi($requests, CategoryResponse::CLASS_NAME);
+//        $response = $this->fetchResponsesFromTestFile($requests, CategoryResponse::CLASS_NAME); // ### ONLY FOR DEBUGGING ###
+        return $response;
     }
     /**
      * @param ProductRequest[] $requests
@@ -164,35 +212,77 @@ class RainforestClient
      * @throws \Exception
      */
     private function fetchProductData($requests) {
+        /** @var ProductResponse[] $response */
+        $response = $this->fetchResponsesFromApi($requests, ProductResponse::CLASS_NAME);
+//        $response = $this->fetchResponsesFromTestFile($requests, ProductResponse::CLASS_NAME); // ### ONLY FOR DEBUGGING ###
+        return $response;
+    }
+    /**
+     * @param CommonRequest[] $requests
+     * @param string $responseClass
+     * @return CommonResponse[]
+     * @throws \Exception
+     */
+    private function fetchResponsesFromApi($requests, $responseClass) {
         $client = new Client();
         $promiseRequests = [];
-        $rfProductResponses = [];
+        $rfResponses = [];
+        $debugName = substr($responseClass, strrpos($responseClass, '\\')+1);
 
         foreach ($requests as $request) {
             $queryString = http_build_query($request->buildQueryArray($this->apiKey));
-            $this->logMessage("Requesting product data from API for {$request->getKey()}", LoggerService::DEBUG);
+            $this->logMessage("Requesting $debugName data from API for {$request->getKey()}", LoggerService::DEBUG);
             $promiseRequests[$request->getKey()] = $client->getAsync(sprintf('https://api.rainforestapi.com/request?%s', $queryString));
         }
 
+        /** @var CommonResponse[] $responses */
         $responses = Promise\settle($promiseRequests)->wait();
         foreach ($responses as $key => $response) {
             try {
-                $data = $this->validateResponseAndReturnData($response);
-                $rfProductResponses[$key] = new ProductResponse($data);
+                $data = $this->validateResponseAndReturnData($response, $responseClass);
+                $rfResponses[$key] = new $responseClass($data);
             } catch (\Exception $e) {
-                $this->logMessage("Could not extract Product data from response {$key}. Message: " . $e->getMessage(), LoggerService::ERROR);
+                $this->logMessage("Could not extract $debugName data from response {$key}. Message: " . $e->getMessage(), LoggerService::ERROR);
             }
         }
 
-        return $rfProductResponses;
+        return $rfResponses;
+    }
+    /**
+     * @param CommonRequest[] $requests
+     * @param string $responseClass
+     * @return CommonResponse[]
+     * @throws \Exception
+     */
+    private function fetchResponsesFromTestFile($requests, $responseClass) {
+        $rfResponses = [];
+        $debugName = substr($responseClass, strrpos($responseClass, '\\')+1);
+
+        foreach ($requests as $key => $request) {
+            $queryString = http_build_query($request->buildQueryArray($this->apiKey));
+            $this->logMessage("Loading from test file, but would normally call https://api.rainforestapi.com/request?$queryString", LoggerService::DEBUG);
+            $responses[$key] = $this->debugLoadResponseFromFile();
+        }
+
+        foreach ($responses as $key => $response) {
+            try {
+                $data = json_decode($response, true);
+                $rfResponses[$key] = new $responseClass($data);
+            } catch (\Exception $e) {
+                $this->logMessage("Could not extract $debugName data from response {$key}. Message: " . $e->getMessage(), LoggerService::ERROR);
+            }
+        }
+
+        return $rfResponses;
     }
 
     /**
      * @param ResponseInterface $response
+     * @param string $responseClass             The namespaced class of the expected response
      * @return array
      * @throws \Exception
      */
-    private function validateResponseAndReturnData($response) {
+    private function validateResponseAndReturnData($response, $responseClass) {
         if (is_array($response) && array_key_exists('state', $response)) {
             if (Promise\PromiseInterface::FULFILLED === $response['state']) {
                 $response = $response['value'];
@@ -201,14 +291,16 @@ class RainforestClient
             }
         }
 
+        // $this->debugSaveResponseToFile($response); // ### ONLY FOR DEBUGGING ###
         $responseCode = $response->getStatusCode();
         if ($responseCode !== 200) {
             throw new \Exception("Rainforest request failed. HTTP response was $responseCode. See https://rainforestapi.com/docs/response-codes for more details.");
         }
 
         $dataArray = json_decode($response->getBody(), true);
+        //$this->logMessage(print_r($dataArray, true), LoggerService::DEBUG);  // ### ONLY FOR DEBUGGING ###
 
-        foreach (ProductResponse::getMainKeys() as $key) {
+        foreach (forward_static_call([$responseClass, 'getMainKeys']) as $key) {
             if (empty($dataArray[$key])) {
                 $this->logMessage("Dump of data object returned from Rainforest:", LoggerService::DEBUG);
                 $this->logMessage(print_r($dataArray, true), LoggerService::DEBUG);
@@ -216,7 +308,7 @@ class RainforestClient
             }
         }
 
-        if (empty($dataArray[ProductResponse::MAIN_KEY_REQUEST_INFO]['success'])) {
+        if (empty($dataArray[CommonResponse::MAIN_KEY_REQUEST_INFO]['success'])) {
             $this->logMessage("Dump of data object returned from Rainforest:", LoggerService::DEBUG);
             $this->logMessage(print_r($dataArray, true), LoggerService::DEBUG);
             throw new \Exception("Rainforest response does not contain 'request_info.success=true'.");
@@ -242,5 +334,20 @@ class RainforestClient
         } else {
             echo $message;
         }
+    }
+
+    protected function getDebugFileName() {
+        return '/path/to/file.txt'; // ### FOR DEBUGGING, SET TO REAL PATH ###
+    }
+    protected function debugSaveResponseToFile($response) {
+        $fileHandle = @fopen($this->getDebugFileName(), 'w+');
+        fwrite($fileHandle, $response->getBody());
+        fclose($fileHandle);
+        $this->logMessage('Saved response to file ' . $this->getDebugFileName(), LoggerService::DEBUG);
+    }
+    protected function debugLoadResponseFromFile() {
+        $responseText = file_get_contents($this->getDebugFileName());
+        $this->logMessage('Loaded response from file ' . $this->getDebugFileName(), LoggerService::DEBUG);
+        return $responseText;
     }
 }

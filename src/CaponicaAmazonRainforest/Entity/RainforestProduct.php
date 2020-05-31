@@ -8,6 +8,7 @@
 
 namespace CaponicaAmazonRainforest\Entity;
 
+use CaponicaAmazonRainforest\Response\CommonResponse;
 use CaponicaAmazonRainforest\Response\ProductResponse;
 
 /**
@@ -17,19 +18,15 @@ use CaponicaAmazonRainforest\Response\ProductResponse;
  *
  * @package CaponicaAmazonRainforest\Entity
  */
-class RainforestProduct
+class RainforestProduct extends RainforestEntityCommon
 {
-    /**
-     * @param ProductResponse|null $rfResponse
-     */
-    public function __construct(ProductResponse $rfResponse = null) {
-        $this->setRainforestResponse($rfResponse);
-        if (!empty($rfResponse)) {
-            $this->updateFromRainforestResponse($rfResponse);
-        }
-    }
+    const CLASS_NAME = 'CaponicaAmazonRainforest\\Entity\\RainforestProduct';
 
-    public function updateFromRainforestResponse(ProductResponse $rfResponse) {
+    /**
+     * @param CommonResponse $rfResponse    A ProductResponse (only declared as 'CommonResponse' for inheritance purposes)
+     */
+    public function updateFromRainforestResponse(CommonResponse $rfResponse) {
+        /** @var ProductResponse $rfResponse */
         $this->setRainforestResponse($rfResponse);
         $this->setAsin($rfResponse->getAsin());
         $this->setMarketplace($rfResponse->getMarketplaceSuffix());
@@ -84,11 +81,6 @@ class RainforestProduct
         }
     }
 
-
-    /**
-     * @var ProductResponse
-     */
-    protected $rfResponse;
 
     /**
      * @var string
@@ -263,30 +255,6 @@ class RainforestProduct
      */
     protected $bbPriceAmount;
 
-
-    /**
-     * Set asin
-     *
-     * @param ProductResponse
-     *
-     * @return RainforestProduct
-     */
-    public function setRainforestResponse($rfResponse)
-    {
-        $this->rfResponse = $rfResponse;
-
-        return $this;
-    }
-
-    /**
-     * Get the ProductResponse object used to create this RainforestProduct
-     *
-     * @return ProductResponse
-     */
-    public function getRainforestResponse()
-    {
-        return $this->rfResponse;
-    }
 
     /**
      * Set asin

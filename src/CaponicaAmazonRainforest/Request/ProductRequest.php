@@ -3,6 +3,8 @@
 namespace CaponicaAmazonRainforest\Request;
 
 use CaponicaAmazonRainforest\Client\RainforestClient;
+use CaponicaAmazonRainforest\Entity\RainforestProduct;
+use CaponicaAmazonRainforest\Response\ProductResponse;
 
 /**
  * Wrapper for the parameters used when making a Product request.
@@ -13,16 +15,18 @@ use CaponicaAmazonRainforest\Client\RainforestClient;
  *
  * @package CaponicaAmazonRainforest\Request
  */
-class ProductRequest
+class ProductRequest extends CommonRequest
 {
-    private $amazon_domain;
-    private $asin;
-    private $url;
+    const CLASS_NAME = 'CaponicaAmazonRainforest\\Request\\ProductRequest';
 
-    private $gtin;
-    private $include_summarization_attributes;
-    private $include_a_plus_body;
-    private $device;
+    protected $amazon_domain;
+    protected $asin;
+    protected $url;
+
+    protected $gtin;
+    protected $include_summarization_attributes;
+    protected $include_a_plus_body;
+    protected $device;
 
     public function __construct($site_or_url, $asin=null, $options=[])
     {
@@ -37,14 +41,14 @@ class ProductRequest
             }
         }
 
-        foreach (self::getOptionKeys() as $key) {
+        foreach ($this->getOptionKeys() as $key) {
             if (isset($options[$key])) {
                 $this->$key = $options[$key];
             }
         }
     }
 
-    public static function getOptionKeys() {
+    public function getOptionKeys() {
         return [
             'gtin',
             'include_summarization_attributes',
@@ -52,27 +56,26 @@ class ProductRequest
             'device',
         ];
     }
-    public static function getQueryKeys() {
-        $queryKeys = self::getOptionKeys();
+
+    public static function getReflectionArray() {
+        return [
+            'requestClass'  => self::CLASS_NAME,
+            'responseClass' => ProductResponse::CLASS_NAME,
+            'entityClass'   => RainforestProduct::CLASS_NAME,
+            'fetcherMethod' => 'fetchProductData',
+            'debug'         => 'Product',
+        ];
+    }
+
+    public function getQueryKeys() {
+        $queryKeys = $this->getOptionKeys();
         $queryKeys[] = 'amazon_domain';
         $queryKeys[] = 'asin';
-        $queryKeys[] = 'gtin';
         return $queryKeys;
     }
 
-    public function buildQueryArray($apiKey) {
-        $queryArray = [
-            'type'          => RainforestClient::REQUEST_TYPE_PRODUCT,
-            'api_key'       => $apiKey,
-        ];
-
-        foreach (self::getQueryKeys() as $key) {
-            if (isset($this->$key)) {
-                $queryArray[$key] = $this->$key;
-            }
-        }
-
-        return $queryArray;
+    public function getQueryType() {
+        return RainforestClient::REQUEST_TYPE_PRODUCT;
     }
 
     /**
@@ -95,18 +98,5 @@ class ProductRequest
             return $this->url;
         }
         throw new \InvalidArgumentException('Could not create a key for the ProductRequest - it must contain an Amazon Domain + ASIN/GTIN, or an URL');
-    }
-
-    /**
-     * A short form key, made by removing parts from the long key
-     *
-     * @return mixed
-     */
-    public function getKey() {
-        $key = str_replace('amazon.',   '', $this->getKeyLong());
-        $key = str_replace('https',     '', $key);
-        $key = str_replace('http',      '', $key);
-        $key = str_replace('://',       '', $key);
-        return $key;
     }
 }
