@@ -29,16 +29,6 @@ class RainforestProduct
         }
     }
 
-    public function getKey() {
-        $sa = new SiteAsin($this->getMarketplace(), $this->getAsin());
-        return $sa->getKey();
-    }
-
-    public function getKeyLong() {
-        $sa = new SiteAsin($this->getMarketplace(), $this->getAsin());
-        return $sa->getKeyLong();
-    }
-
     public function updateFromRainforestResponse(ProductResponse $rfResponse) {
         $this->setRainforestResponse($rfResponse);
         $this->setAsin($rfResponse->getAsin());
