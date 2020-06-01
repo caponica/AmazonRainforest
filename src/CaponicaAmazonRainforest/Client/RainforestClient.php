@@ -45,9 +45,15 @@ class RainforestClient
     protected $logger;
     /** @var string $apiKey*/
     private $apiKey;
+    /** @var bool $debugFilePath */
+    private $debugFilePath = null;
+    /** @var bool $debugInput       Set true to read responses from a file, instead of calling the API */
+    private $debugInput = false;
+    /** @var bool $debugOutput      Set true to save response to a file */
+    private $debugOutput = false;
 
     /**
-     * @param array $config             Must include "api_key" with value.
+     * @param array $config             Must include "api_key" with value. Other options are debug_file_path, debug_input, debug_output.
      * @param LoggerInterface $logger
      */
     public function __construct($config, LoggerInterface $logger = null) {
@@ -56,6 +62,16 @@ class RainforestClient
         $this->apiKey           = $config['api_key'];
         if (empty($this->apiKey)) {
             throw new \InvalidArgumentException('Missing Rainforest API key');
+        }
+
+        if (!empty($config['debug_file_path'])) {
+            $this->debugFilePath = $config['debug_file_path'];
+            if (!empty($config['debug_input'])) {
+                $this->debugInput = true;
+            }
+            if (!empty($config['debug_output'])) {
+                $this->debugOutput = true;
+            }
         }
     }
 
@@ -201,9 +217,12 @@ class RainforestClient
      * @throws \Exception
      */
     private function fetchCategoryData($requests) {
-        /** @var CategoryResponse[] $response */
-        $response = $this->fetchResponsesFromApi($requests, CategoryResponse::CLASS_NAME);
-//        $response = $this->fetchResponsesFromTestFile($requests, CategoryResponse::CLASS_NAME); // ### ONLY FOR DEBUGGING ###
+        if ($this->debugInput) {
+            $response = $this->fetchResponsesFromTestFile($requests, CategoryResponse::CLASS_NAME);
+        } else {
+            /** @var CategoryResponse[] $response */
+            $response = $this->fetchResponsesFromApi($requests, CategoryResponse::CLASS_NAME);
+        }
         return $response;
     }
     /**
@@ -212,9 +231,12 @@ class RainforestClient
      * @throws \Exception
      */
     private function fetchProductData($requests) {
-        /** @var ProductResponse[] $response */
-        $response = $this->fetchResponsesFromApi($requests, ProductResponse::CLASS_NAME);
-//        $response = $this->fetchResponsesFromTestFile($requests, ProductResponse::CLASS_NAME); // ### ONLY FOR DEBUGGING ###
+        if ($this->debugInput) {
+            $response = $this->fetchResponsesFromTestFile($requests, ProductResponse::CLASS_NAME);
+        } else {
+            /** @var ProductResponse[] $response */
+            $response = $this->fetchResponsesFromApi($requests, ProductResponse::CLASS_NAME);
+        }
         return $response;
     }
     /**
@@ -256,6 +278,7 @@ class RainforestClient
      */
     private function fetchResponsesFromTestFile($requests, $responseClass) {
         $rfResponses = [];
+        $responses = [];
         $debugName = substr($responseClass, strrpos($responseClass, '\\')+1);
 
         foreach ($requests as $key => $request) {
@@ -291,7 +314,9 @@ class RainforestClient
             }
         }
 
-        // $this->debugSaveResponseToFile($response); // ### ONLY FOR DEBUGGING ###
+        if ($this->debugOutput) {
+            $this->debugSaveResponseToFile($response);
+        }
         $responseCode = $response->getStatusCode();
         if ($responseCode !== 200) {
             throw new \Exception("Rainforest request failed. HTTP response was $responseCode. See https://rainforestapi.com/docs/response-codes for more details.");
@@ -318,7 +343,7 @@ class RainforestClient
     }
 
     /**
-     * Logs with an arbitrary level.
+     * Logs with a given level.
      *
      * @param mixed  $level
      * @param string $message
@@ -337,9 +362,9 @@ class RainforestClient
     }
 
     protected function getDebugFileName() {
-        return '/path/to/file.txt'; // ### FOR DEBUGGING, SET TO REAL PATH ###
+        return $this->debugFilePath;
     }
-    protected function debugSaveResponseToFile($response) {
+    protected function debugSaveResponseToFile(ResponseInterface $response) {
         $fileHandle = @fopen($this->getDebugFileName(), 'w+');
         fwrite($fileHandle, $response->getBody());
         fclose($fileHandle);
