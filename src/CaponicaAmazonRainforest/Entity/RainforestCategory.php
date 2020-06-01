@@ -23,7 +23,7 @@ class RainforestCategory extends RainforestEntityCommon
     const CLASS_NAME = 'CaponicaAmazonRainforest\\Entity\\RainforestCategory';
 
     /**
-     * @param CommonResponse $rfResponse    A ProductResponse (only declared as 'CommonResponse' for inheritance purposes)
+     * @param CommonResponse $rfResponse    A CategoryResponse (only declared as 'CommonResponse' for inheritance purposes)
      */
     public function updateFromRainforestResponse(CommonResponse $rfResponse) {
         /** @var CategoryResponse $rfResponse */
