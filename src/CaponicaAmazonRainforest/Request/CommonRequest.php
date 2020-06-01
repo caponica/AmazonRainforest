@@ -58,7 +58,7 @@ abstract class CommonRequest implements CommonRequestInterface
      * @return mixed
      */
     public static function shortenKey($key) {
-        $key = str_replace('amazon.',   '', $key);
+        $key = preg_replace('/amazon\./',   '', $key, 1);
         $key = str_replace('https',     '', $key);
         $key = str_replace('http',      '', $key);
         $key = str_replace('://',       '', $key);
