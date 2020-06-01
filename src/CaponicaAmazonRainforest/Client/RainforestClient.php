@@ -210,8 +210,11 @@ class RainforestClient
             }
         }
 
-        $fetcher = $reflectionArray['fetcherMethod'];
-        $rfResponses = $this->$fetcher($requests);
+        if ($this->debugInput) {
+            $rfResponses = $this->fetchResponsesFromTestFile($requests, $reflectionArray['responseClass']);
+        } else {
+            $rfResponses = $this->fetchResponsesFromApi($requests, $reflectionArray['responseClass']);
+        }
 
         foreach ($requests as $request) {
             if (empty($rfResponses[$request->getKey()])) {
@@ -227,48 +230,6 @@ class RainforestClient
         return $rfObjects;
     }
 
-    /**
-     * @param CategoryRequest[] $requests
-     * @return CategoryResponse[]
-     * @throws \Exception
-     */
-    private function fetchCategoryData($requests) {
-        if ($this->debugInput) {
-            $response = $this->fetchResponsesFromTestFile($requests, CategoryResponse::CLASS_NAME);
-        } else {
-            /** @var CategoryResponse[] $response */
-            $response = $this->fetchResponsesFromApi($requests, CategoryResponse::CLASS_NAME);
-        }
-        return $response;
-    }
-    /**
-     * @param ProductRequest[] $requests
-     * @return ProductResponse[]
-     * @throws \Exception
-     */
-    private function fetchProductData($requests) {
-        if ($this->debugInput) {
-            $response = $this->fetchResponsesFromTestFile($requests, ProductResponse::CLASS_NAME);
-        } else {
-            /** @var ProductResponse[] $response */
-            $response = $this->fetchResponsesFromApi($requests, ProductResponse::CLASS_NAME);
-        }
-        return $response;
-    }
-    /**
-     * @param SearchRequest[] $requests
-     * @return SearchResponse[]
-     * @throws \Exception
-     */
-    private function fetchSearchData($requests) {
-        if ($this->debugInput) {
-            $response = $this->fetchResponsesFromTestFile($requests, SearchResponse::CLASS_NAME);
-        } else {
-            /** @var SearchResponse[] $response */
-            $response = $this->fetchResponsesFromApi($requests, SearchResponse::CLASS_NAME);
-        }
-        return $response;
-    }
     /**
      * @param CommonRequest[] $requests
      * @param string $responseClass

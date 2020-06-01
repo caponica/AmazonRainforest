@@ -11,7 +11,7 @@ interface CommonRequestInterface
 {
     /**
      * Returns an array of namespaced class/function names used when handling this kind of Request and building the
-     * resulting Response and Entity objects. Keys should be: 'requestClass', 'responseClass', 'entityClass', 'fetcherMethod', 'debug'
+     * resulting Response and Entity objects. Keys should be: 'requestClass', 'responseClass', 'entityClass', 'debug'
      *
      * @return array
      */

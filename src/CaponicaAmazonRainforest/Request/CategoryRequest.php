@@ -16,7 +16,7 @@ class CategoryRequest extends CommonRequest
     const CLASS_NAME = 'CaponicaAmazonRainforest\\Request\\CategoryRequest';
 
     protected $url;
-    protected $page;
+    protected $page = 1;
     protected $sort_by;
 
     const SORT_BY_AVERAGE_REVIEW    = 'average_review';
@@ -37,7 +37,6 @@ class CategoryRequest extends CommonRequest
             'requestClass'  => self::CLASS_NAME,
             'responseClass' => CategoryResponse::CLASS_NAME,
             'entityClass'   => RainforestCategory::CLASS_NAME,
-            'fetcherMethod' => 'fetchCategoryData',
             'debug'         => 'Category',
         ];
     }

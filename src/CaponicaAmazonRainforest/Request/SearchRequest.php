@@ -20,7 +20,7 @@ class SearchRequest extends CommonRequest
     protected $url;
 
     protected $category_id; // You can find the value to pass into the category_id field by inspecting an Amazon URL and looking for the 'rh=' querystring parameter.
-    protected $page;
+    protected $page = 1;
     protected $sort_by;
 
     const SORT_BY_AVERAGE_REVIEW    = 'average_review';
@@ -67,7 +67,6 @@ class SearchRequest extends CommonRequest
             'requestClass'  => self::CLASS_NAME,
             'responseClass' => SearchResponse::CLASS_NAME,
             'entityClass'   => RainforestSearch::CLASS_NAME,
-            'fetcherMethod' => 'fetchSearchData',
             'debug'         => 'Search',
         ];
     }

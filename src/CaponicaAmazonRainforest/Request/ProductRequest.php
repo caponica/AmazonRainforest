@@ -62,7 +62,6 @@ class ProductRequest extends CommonRequest
             'requestClass'  => self::CLASS_NAME,
             'responseClass' => ProductResponse::CLASS_NAME,
             'entityClass'   => RainforestProduct::CLASS_NAME,
-            'fetcherMethod' => 'fetchProductData',
             'debug'         => 'Product',
         ];
     }
