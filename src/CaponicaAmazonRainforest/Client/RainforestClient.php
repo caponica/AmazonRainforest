@@ -7,9 +7,11 @@ use CaponicaAmazonRainforest\Entity\RainforestProduct;
 use CaponicaAmazonRainforest\Request\CategoryRequest;
 use CaponicaAmazonRainforest\Request\CommonRequest;
 use CaponicaAmazonRainforest\Request\ProductRequest;
+use CaponicaAmazonRainforest\Request\SearchRequest;
 use CaponicaAmazonRainforest\Response\CategoryResponse;
 use CaponicaAmazonRainforest\Response\CommonResponse;
 use CaponicaAmazonRainforest\Response\ProductResponse;
+use CaponicaAmazonRainforest\Response\SearchResponse;
 use CaponicaAmazonRainforest\Service\LoggerService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
@@ -40,6 +42,7 @@ class RainforestClient
 
     const REQUEST_TYPE_CATEGORY     = 'category';
     const REQUEST_TYPE_PRODUCT      = 'product';
+    const REQUEST_TYPE_SEARCH       = 'search';
 
     /** @var LoggerInterface $logger */
     protected $logger;
@@ -168,6 +171,19 @@ class RainforestClient
         return $products;
     }
     /**
+     * @param SearchRequest|SearchRequest[] $requests               The SearchRequest(s) to process and retrieve.
+     * @param RainforestSearch|RainforestSearch[] $rfSearches       RainforestSearch object (or Array indexed by getKey()).
+     *                                                              If set then they will be updated from the response,
+     *                                                              instead of creating new ones.
+     * @return RainforestSearch[]
+     * @throws \Exception
+     */
+    public function retrieveSearches($requests, $rfSearches=null) {
+        /** @var RainforestSearch[] $searches */
+        $searches = $this->retrieveObjects(SearchRequest::getReflectionArray(), $requests, $rfSearches);
+        return $searches;
+    }
+    /**
      * @param array $reflectionArray
      * @param CommonRequest|CommonRequest[] $requests   The CommonRequest(s) to process and retrieve.
      * @param $rfObjects                                Rainforest objects (or Array indexed by getKey()). If set then they
@@ -240,6 +256,20 @@ class RainforestClient
         return $response;
     }
     /**
+     * @param SearchRequest[] $requests
+     * @return SearchResponse[]
+     * @throws \Exception
+     */
+    private function fetchSearchData($requests) {
+        if ($this->debugInput) {
+            $response = $this->fetchResponsesFromTestFile($requests, SearchResponse::CLASS_NAME);
+        } else {
+            /** @var SearchResponse[] $response */
+            $response = $this->fetchResponsesFromApi($requests, SearchResponse::CLASS_NAME);
+        }
+        return $response;
+    }
+    /**
      * @param CommonRequest[] $requests
      * @param string $responseClass
      * @return CommonResponse[]
@@ -254,6 +284,7 @@ class RainforestClient
         foreach ($requests as $request) {
             $queryString = http_build_query($request->buildQueryArray($this->apiKey));
             $this->logMessage("Requesting $debugName data from API for {$request->getKey()}", LoggerService::DEBUG);
+            $this->logMessage("Query string is $queryString", LoggerService::DEBUG);
             $promiseRequests[$request->getKey()] = $client->getAsync(sprintf('https://api.rainforestapi.com/request?%s', $queryString));
         }
 
