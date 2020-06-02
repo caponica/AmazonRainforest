@@ -12,7 +12,7 @@ use CaponicaAmazonRainforest\Response\CommonResponse;
 use CaponicaAmazonRainforest\Response\SearchResponse;
 
 /**
- * Converts a ProductResponse into an object representing a product. Main fields have accessors, if you need something
+ * Converts a SearchResponse into an object representing a search results page. Main fields have accessors, if you need something
  * that is not available through a local accessor method then you can call getRainforestResponse()->getXyz() to access
  * all data in the underlying response arrays.
  *
@@ -130,6 +130,16 @@ class RainforestSearch extends RainforestEntityCommon
     public function getMarketplace()
     {
         return $this->marketplace;
+    }
+
+    public function getCategoryIdFilter() {
+        return $this->categoryIdFilter;
+    }
+    public function getUrl() {
+        return $this->url;
+    }
+    public function getSortBy() {
+        return $this->sortBy;
     }
 
     public function getCurrentPage() {

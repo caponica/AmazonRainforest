@@ -3,8 +3,11 @@
 namespace CaponicaAmazonRainforest\Entity;
 
 /**
- * A child object which lives under RainforestSearch. Represents a single "hit" in the Search results.
+ * A child object which lives under RainforestSearch or RainforestBestSellers. Represents a single "hit" in the Search results.
+ * Note that some fields are only available from Search, some only from BestSellers
+ *
  * @see  https://rainforestapi.com/docs/product-data-api/results/search
+ * @see  https://rainforestapi.com/docs/product-data-api/results/bestsellers
  *
  * @package CaponicaAmazonRainforest\Entity
  */
@@ -23,17 +26,27 @@ class RainforestSearchResult
     protected $title;
     protected $asin;
     protected $link;
-    protected $isPrime;
     protected $image;
+    protected $rating50;
+    protected $ratingsTotal;
+    protected $priceCurrency;
+    protected $priceAmount;
+
+    // Fields only available under RainforestSearch
+    protected $isPrime;
     protected $sponsored;
     protected $addOnItem;
     protected $categories;
     protected $availability;
-    protected $rating50;
-    protected $ratingsTotal;
     protected $reviewsTotal;
-    protected $priceCurrency;
-    protected $priceAmount;
+
+    // Fields only available under RainforestBestSellers
+    protected $rank;
+    protected $subTitleText;
+    protected $subTitleLink;
+    protected $variant;
+    protected $priceLowerAmount;
+    protected $priceUpperAmount;
 
     /**
      * @param array $data       Raw array of data from the API
@@ -45,12 +58,16 @@ class RainforestSearchResult
             'asin'          => 'setAsin',
             'link'          => 'setLink',
             'image'         => 'setImage',
+            'ratings_total' => 'setRatingsTotal',
+            'rating'        => 'setRating50FromRating5',
+
+            'is_prime'      => 'setIsPrime',
             'sponsored'     => 'setSponsored',
             'categories'    => 'setCategories',
-            'is_prime'      => 'setIsPrime',
-            'ratings_total' => 'setRatingsTotal',
             'reviews_total' => 'setReviewsTotal',
-            'rating'        => 'setRating50FromRating5',
+
+            'rank'          => 'setRank',
+            'variant'       => 'setVariant',
         ];
         foreach ($fields as $dataKey => $setter) {
             if (isset($data[$dataKey])) {
@@ -65,11 +82,41 @@ class RainforestSearchResult
             $this->availability = null;
         }
 
+        if (!empty($data['sub_title']['text'])) {
+            $this->subTitleText = $data['sub_title']['text'];
+        } else {
+            $this->subTitleText = null;
+        }
+        if (!empty($data['sub_title']['link'])) {
+            $this->subTitleLink = $data['sub_title']['link'];
+        } else {
+            $this->subTitleLink = null;
+        }
+
         if (!empty($data['prices'][0]['currency'])) {
             $this->priceCurrency = $data['prices'][0]['currency'];
         }
         if (!empty($data['prices'][0]['value'])) {
             $this->priceAmount = $data['prices'][0]['value'];
+        }
+
+        if (!empty($data['price']['currency'])) {
+            $this->priceCurrency = $data['price']['currency'];
+        }
+        if (!empty($data['price']['value'])) {
+            $this->priceAmount = $data['price']['value'];
+        }
+        if (!empty($data['price_lower']['value'])) {
+            $this->priceLowerAmount = $data['price_lower']['value'];
+            if (empty($this->priceCurrency) && !empty($data['price_lower']['currency'])) {
+                $this->priceCurrency = $data['price_lower']['currency'];
+            }
+        }
+        if (!empty($data['price_upper']['value'])) {
+            $this->priceUpperAmount = $data['price_upper']['value'];
+            if (empty($this->priceCurrency) && !empty($data['price_upper']['currency'])) {
+                $this->priceCurrency = $data['price_upper']['currency'];
+            }
         }
     }
 
@@ -106,5 +153,24 @@ class RainforestSearchResult
 
     public function setRating50FromRating5($rating5) {
         $this->rating50 = 10 * $rating5;
+    }
+
+    public function setRank($value) {
+        $this->rank = $value;
+    }
+    public function setSubTitleText($value) {
+        $this->subTitleText = $value;
+    }
+    public function setSubTitleLink($value) {
+        $this->subTitleLink = $value;
+    }
+    public function setVariant($value) {
+        $this->variant = $value;
+    }
+    public function setPriceLowerAmount($value) {
+        $this->priceLowerAmount = $value;
+    }
+    public function setPriceUpperAmount($value) {
+        $this->priceUpperAmount = $value;
     }
 }

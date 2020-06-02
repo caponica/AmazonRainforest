@@ -2,16 +2,15 @@
 
 namespace CaponicaAmazonRainforest\Client;
 
+use CaponicaAmazonRainforest\Entity\RainforestBestSellers;
 use CaponicaAmazonRainforest\Entity\RainforestEntityCommon;
 use CaponicaAmazonRainforest\Entity\RainforestProduct;
+use CaponicaAmazonRainforest\Request\BestSellersRequest;
 use CaponicaAmazonRainforest\Request\CategoryRequest;
 use CaponicaAmazonRainforest\Request\CommonRequest;
 use CaponicaAmazonRainforest\Request\ProductRequest;
 use CaponicaAmazonRainforest\Request\SearchRequest;
-use CaponicaAmazonRainforest\Response\CategoryResponse;
 use CaponicaAmazonRainforest\Response\CommonResponse;
-use CaponicaAmazonRainforest\Response\ProductResponse;
-use CaponicaAmazonRainforest\Response\SearchResponse;
 use CaponicaAmazonRainforest\Service\LoggerService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
@@ -40,6 +39,7 @@ class RainforestClient
     const AMAZON_SITE_UK            = 'amazon.co.uk';
     const AMAZON_SITE_USA           = 'amazon.com';
 
+    const REQUEST_TYPE_BEST_SELLER  = 'bestsellers';
     const REQUEST_TYPE_CATEGORY     = 'category';
     const REQUEST_TYPE_PRODUCT      = 'product';
     const REQUEST_TYPE_SEARCH       = 'search';
@@ -144,6 +144,19 @@ class RainforestClient
         return $cleanArray;
     }
 
+    /**
+     * @param BestSellersRequest|BestSellersRequest[] $requests             The BestSellersRequest(s) to process and retrieve.
+     * @param RainforestBestSellers|RainforestBestSellers[] $rfBestSellers  RainforestBestSellers object (or Array indexed by getKey()).
+     *                                                                      If set then they will be updated from the response,
+     *                                                                      instead of creating new ones.
+     * @return RainforestBestSellers[]
+     * @throws \Exception
+     */
+    public function retrieveBestSellers($requests, $rfBestSellers=null) {
+        /** @var RainforestBestSellers[] $bestSellers */
+        $bestSellers = $this->retrieveObjects(BestSellersRequest::getReflectionArray(), $requests, $rfBestSellers);
+        return $bestSellers;
+    }
     /**
      * @param CategoryRequest|CategoryRequest[] $requests           The CategoryRequest(s) to process and retrieve.
      * @param RainforestCategory|RainforestCategory[] $rfCats       RainforestCategory object (or Array indexed by getKey()).

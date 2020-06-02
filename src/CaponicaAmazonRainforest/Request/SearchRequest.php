@@ -84,7 +84,7 @@ class SearchRequest extends CommonRequest
     }
 
     /**
-     * A unique key for this ProductRequest
+     * A unique key for this SearchRequest
      *
      * @return string
      */
