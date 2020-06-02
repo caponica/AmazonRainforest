@@ -20,9 +20,7 @@ class BestSellersRequest extends CommonRequest
     protected $total_pages = null;
 
     /**
-     * BestSellerRequest constructor. If no second parameter is provided then the first parameter is assumed to be a full search URL.
-     * If the second parameter is provided then the first parameter is assumed to be the amazon_domain
-     * The options parameter is an array using one or more of the keys returned by getOptionKeys()
+     * BestSellerRequest constructor.
      *
      * @param string $url
      * @param null|int $page

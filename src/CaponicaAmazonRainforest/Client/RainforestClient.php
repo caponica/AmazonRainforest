@@ -8,6 +8,7 @@ use CaponicaAmazonRainforest\Entity\RainforestProduct;
 use CaponicaAmazonRainforest\Request\BestSellersRequest;
 use CaponicaAmazonRainforest\Request\CategoryRequest;
 use CaponicaAmazonRainforest\Request\CommonRequest;
+use CaponicaAmazonRainforest\Request\OfferRequest;
 use CaponicaAmazonRainforest\Request\ProductRequest;
 use CaponicaAmazonRainforest\Request\SearchRequest;
 use CaponicaAmazonRainforest\Response\CommonResponse;
@@ -41,6 +42,7 @@ class RainforestClient
 
     const REQUEST_TYPE_BEST_SELLER  = 'bestsellers';
     const REQUEST_TYPE_CATEGORY     = 'category';
+    const REQUEST_TYPE_OFFERS       = 'offers';
     const REQUEST_TYPE_PRODUCT      = 'product';
     const REQUEST_TYPE_SEARCH       = 'search';
 
@@ -169,6 +171,19 @@ class RainforestClient
         /** @var RainforestCategory[] $cats*/
         $cats = $this->retrieveObjects(CategoryRequest::getReflectionArray(), $requests, $rfCats);
         return $cats;
+    }
+    /**
+     * @param OfferRequest|OfferRequest[] $requests                 The OfferRequest(s) to process and retrieve.
+     * @param RainforestOffer|RainforestOffer[] $rfOffers           RainforestOffer object (or Array indexed by getKey()).
+     *                                                              If set then they will be updated from the response,
+     *                                                              instead of creating new ones.
+     * @return RainforestOffer[]
+     * @throws \Exception
+     */
+    public function retrieveOffers($requests, $rfOffers=null) {
+        /** @var RainforestOffer[] $offers */
+        $offers = $this->retrieveObjects(OfferRequest::getReflectionArray(), $requests, $rfOffers);
+        return $offers;
     }
     /**
      * @param ProductRequest|ProductRequest[] $requests             The ProductRequest(s) to process and retrieve.

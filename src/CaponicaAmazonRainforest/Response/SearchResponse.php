@@ -48,9 +48,14 @@ class SearchResponse extends CommonResponse
         }
         return $this->searchResults[$key];
     }
-
     public function getSearchResults() {
         return $this->searchResults;
+    }
+    public function getSearchResultCount() {
+        if (empty($this->searchResults)) {
+            return null;
+        }
+        return count($this->searchResults);
     }
 
     public function getPagination() {
@@ -59,14 +64,6 @@ class SearchResponse extends CommonResponse
         }
         return $this->pagination;
     }
-
-    public function getSearchResultCount() {
-        if (empty($this->searchResults)) {
-            return null;
-        }
-        return count($this->searchResults);
-    }
-
     public function getCurrentPage() {
         if (empty($this->pagination) || empty($this->pagination['current_page'])) {
             return null;
