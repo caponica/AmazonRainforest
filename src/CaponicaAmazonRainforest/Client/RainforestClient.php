@@ -11,6 +11,7 @@ use CaponicaAmazonRainforest\Request\CategoryRequest;
 use CaponicaAmazonRainforest\Request\CommonRequest;
 use CaponicaAmazonRainforest\Request\OfferRequest;
 use CaponicaAmazonRainforest\Request\ProductRequest;
+use CaponicaAmazonRainforest\Request\ReviewRequest;
 use CaponicaAmazonRainforest\Request\SearchRequest;
 use CaponicaAmazonRainforest\Request\StockEstimationRequest;
 use CaponicaAmazonRainforest\Response\CommonResponse;
@@ -46,6 +47,7 @@ class RainforestClient
     const REQUEST_TYPE_CATEGORY         = 'category';
     const REQUEST_TYPE_OFFERS           = 'offers';
     const REQUEST_TYPE_PRODUCT          = 'product';
+    const REQUEST_TYPE_REVIEWS          = 'reviews';
     const REQUEST_TYPE_SEARCH           = 'search';
     const REQUEST_TYPE_STOCK_ESTIMATION = 'stock_estimation';
 
@@ -200,6 +202,19 @@ class RainforestClient
         /** @var RainforestProduct[] $products */
         $products = $this->retrieveObjects(ProductRequest::getReflectionArray(), $requests, $rfProducts);
         return $products;
+    }
+    /**
+     * @param ReviewRequest|ReviewRequest[] $requests               The ReviewRequest(s) to process and retrieve.
+     * @param RainforestReview|RainforestReview[] $rfReviews        RainforestReview object (or Array indexed by getKey()).
+     *                                                              If set then they will be updated from the response,
+     *                                                              instead of creating new ones.
+     * @return RainforestReview[]
+     * @throws \Exception
+     */
+    public function retrieveReviews($requests, $rfReviews=null) {
+        /** @var RainforestReview[] $reviews */
+        $reviews = $this->retrieveObjects(ReviewRequest::getReflectionArray(), $requests, $rfReviews);
+        return $reviews;
     }
     /**
      * @param SearchRequest|SearchRequest[] $requests               The SearchRequest(s) to process and retrieve.
