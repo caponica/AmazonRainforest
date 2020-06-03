@@ -5,12 +5,14 @@ namespace CaponicaAmazonRainforest\Client;
 use CaponicaAmazonRainforest\Entity\RainforestBestSellers;
 use CaponicaAmazonRainforest\Entity\RainforestEntityCommon;
 use CaponicaAmazonRainforest\Entity\RainforestProduct;
+use CaponicaAmazonRainforest\Entity\RainforestStockEstimation;
 use CaponicaAmazonRainforest\Request\BestSellersRequest;
 use CaponicaAmazonRainforest\Request\CategoryRequest;
 use CaponicaAmazonRainforest\Request\CommonRequest;
 use CaponicaAmazonRainforest\Request\OfferRequest;
 use CaponicaAmazonRainforest\Request\ProductRequest;
 use CaponicaAmazonRainforest\Request\SearchRequest;
+use CaponicaAmazonRainforest\Request\StockEstimationRequest;
 use CaponicaAmazonRainforest\Response\CommonResponse;
 use CaponicaAmazonRainforest\Service\LoggerService;
 use GuzzleHttp\Client;
@@ -40,11 +42,12 @@ class RainforestClient
     const AMAZON_SITE_UK            = 'amazon.co.uk';
     const AMAZON_SITE_USA           = 'amazon.com';
 
-    const REQUEST_TYPE_BEST_SELLER  = 'bestsellers';
-    const REQUEST_TYPE_CATEGORY     = 'category';
-    const REQUEST_TYPE_OFFERS       = 'offers';
-    const REQUEST_TYPE_PRODUCT      = 'product';
-    const REQUEST_TYPE_SEARCH       = 'search';
+    const REQUEST_TYPE_BEST_SELLER      = 'bestsellers';
+    const REQUEST_TYPE_CATEGORY         = 'category';
+    const REQUEST_TYPE_OFFERS           = 'offers';
+    const REQUEST_TYPE_PRODUCT          = 'product';
+    const REQUEST_TYPE_SEARCH           = 'search';
+    const REQUEST_TYPE_STOCK_ESTIMATION = 'stock_estimation';
 
     /** @var LoggerInterface $logger */
     protected $logger;
@@ -210,6 +213,19 @@ class RainforestClient
         /** @var RainforestSearch[] $searches */
         $searches = $this->retrieveObjects(SearchRequest::getReflectionArray(), $requests, $rfSearches);
         return $searches;
+    }
+    /**
+     * @param StockEstimationRequest|StockEstimationRequest[] $requests         The StockEstimationRequest(s) to process and retrieve.
+     * @param RainforestStockEstimation|RainforestStockEstimation[] $rfObjects  RainforestStockEstimation object (or Array indexed by getKey()).
+     *                                                                          If set then they will be updated from the response,
+     *                                                                          instead of creating new ones.
+     * @return RainforestStockEstimation[]
+     * @throws \Exception
+     */
+    public function retrieveStockEstimations($requests, $rfObjects=null) {
+        /** @var RainforestStockEstimation[] $objects */
+        $objects = $this->retrieveObjects(StockEstimationRequest::getReflectionArray(), $requests, $rfObjects);
+        return $objects;
     }
     /**
      * @param array $reflectionArray
