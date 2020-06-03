@@ -114,7 +114,7 @@ class OfferResponse extends CommonResponse
     public function getTitle() {
         return $this->getProductField('title');
     }
-    public function getReviews_total() {
+    public function getReviewsTotal() {
         return $this->getProductField('reviews_total');
     }
     public function getImageLink() {

@@ -70,6 +70,7 @@ class ProductRequest extends CommonRequest
         $queryKeys = $this->getOptionKeys();
         $queryKeys[] = 'amazon_domain';
         $queryKeys[] = 'asin';
+        $queryKeys[] = 'url';
         return $queryKeys;
     }
 

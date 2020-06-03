@@ -39,8 +39,8 @@ class RainforestProduct extends RainforestEntityCommon
         $this->setSalesRankTlc($rfResponse->getSalesRankTlc());
         $this->setHasCoupon($rfResponse->getHasCoupon());
         $this->setRating50($rfResponse->getRating50());
-        $this->setRatingsTotal($rfResponse->getRatings_total());
-        $this->setReviewsTotal($rfResponse->getReviews_total());
+        $this->setRatingsTotal($rfResponse->getRatingsTotal());
+        $this->setReviewsTotal($rfResponse->getReviewsTotal());
         $this->setHasAPlusContent($rfResponse->getHasAPlusContent());
         $this->setIsAPlusThirdParty($rfResponse->getIsAPlusThirdParty());
         $this->setAPlusCompany($rfResponse->getAPlusCompany());

@@ -435,10 +435,10 @@ class ProductResponse extends CommonResponse
     public function getHasCoupon() {
         return $this->getProductField('has_coupon', false);
     }
-    public function getRatings_total() {
+    public function getRatingsTotal() {
         return $this->getProductField('ratings_total');
     }
-    public function getReviews_total() {
+    public function getReviewsTotal() {
         return $this->getProductField('reviews_total');
     }
     public function getLanguage() {
