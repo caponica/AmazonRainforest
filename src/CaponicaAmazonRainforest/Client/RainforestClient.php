@@ -408,7 +408,7 @@ class RainforestClient
             // Use the internal logger for logging.
             $this->logger->log($level, $message, $context);
         } else {
-            echo $message;
+            // echo $message; // Users can uncomment this line instead of creating an EchoLogger if they need to.
         }
     }
 

@@ -120,6 +120,286 @@ class RainforestSearchResult
         }
     }
 
+    /**
+     * Get position
+     *
+     * @return integer
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Get asin
+     *
+     * @return string
+     */
+    public function getAsin()
+    {
+        return $this->asin;
+    }
+
+    /**
+     * Get link
+     *
+     * @return string
+     */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * Get rank
+     *
+     * @return integer
+     */
+    public function getRank()
+    {
+        return $this->rank;
+    }
+
+    /**
+     * Get variant
+     *
+     * @return string
+     */
+    public function getVariant()
+    {
+        return $this->variant;
+    }
+
+    /**
+     * Get subTitleText
+     *
+     * @return string
+     */
+    public function getSubTitleText()
+    {
+        return $this->subTitleText;
+    }
+
+    /**
+     * Get subTitleLink
+     *
+     * @return string
+     */
+    public function getSubTitleLink()
+    {
+        return $this->subTitleLink;
+    }
+
+    /**
+     * Get isPrime
+     *
+     * @return boolean
+     */
+    public function getIsPrime()
+    {
+        return $this->isPrime;
+    }
+
+    /**
+     * Get image
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * Get sponsored
+     *
+     * @return boolean
+     */
+    public function getSponsored()
+    {
+        return $this->sponsored;
+    }
+
+    /**
+     * Set addOnItem
+     *
+     * @param boolean $addOnItem
+     *
+     * @return RainforestSearchResult
+     */
+    public function setAddOnItem($addOnItem)
+    {
+        $this->addOnItem = $addOnItem;
+
+        return $this;
+    }
+
+    /**
+     * Get addOnItem
+     *
+     * @return boolean
+     */
+    public function getAddOnItem()
+    {
+        return $this->addOnItem;
+    }
+
+    /**
+     * Get categories
+     *
+     * @return string
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+
+    /**
+     * Set availability
+     *
+     * @param string $availability
+     *
+     * @return RainforestSearchResult
+     */
+    public function setAvailability($availability)
+    {
+        $this->availability = $availability;
+
+        return $this;
+    }
+
+    /**
+     * Get availability
+     *
+     * @return string
+     */
+    public function getAvailability()
+    {
+        return $this->availability;
+    }
+
+    /**
+     * Set rating50
+     *
+     * @param integer $rating50
+     *
+     * @return RainforestSearchResult
+     */
+    public function setRating50($rating50)
+    {
+        $this->rating50 = $rating50;
+
+        return $this;
+    }
+
+    /**
+     * Get rating50
+     *
+     * @return integer
+     */
+    public function getRating50()
+    {
+        return $this->rating50;
+    }
+
+    /**
+     * Get ratingsTotal
+     *
+     * @return integer
+     */
+    public function getRatingsTotal()
+    {
+        return $this->ratingsTotal;
+    }
+
+    /**
+     * Get reviewsTotal
+     *
+     * @return integer
+     */
+    public function getReviewsTotal()
+    {
+        return $this->reviewsTotal;
+    }
+
+    /**
+     * Set priceCurrency
+     *
+     * @param string $priceCurrency
+     *
+     * @return RainforestSearchResult
+     */
+    public function setPriceCurrency($priceCurrency)
+    {
+        $this->priceCurrency = $priceCurrency;
+
+        return $this;
+    }
+
+    /**
+     * Get priceCurrency
+     *
+     * @return string
+     */
+    public function getPriceCurrency()
+    {
+        return $this->priceCurrency;
+    }
+
+    /**
+     * Set priceAmount
+     *
+     * @param string $priceAmount
+     *
+     * @return RainforestSearchResult
+     */
+    public function setPriceAmount($priceAmount)
+    {
+        $this->priceAmount = $priceAmount;
+
+        return $this;
+    }
+
+    /**
+     * Get priceAmount
+     *
+     * @return string
+     */
+    public function getPriceAmount()
+    {
+        return $this->priceAmount;
+    }
+
+    /**
+     * Get priceLowerAmount
+     *
+     * @return string
+     */
+    public function getPriceLowerAmount()
+    {
+        return $this->priceLowerAmount;
+    }
+
+    /**
+     * Get priceUpperAmount
+     *
+     * @return string
+     */
+    public function getPriceUpperAmount()
+    {
+        return $this->priceUpperAmount;
+    }
+
     public function setPosition($value) {
         $this->position = $value;
     }

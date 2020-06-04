@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Christian
- * Date: 26/05/2020
- * Time: 19:46
- */
 
 namespace CaponicaAmazonRainforest\Entity;
 
@@ -29,11 +23,11 @@ class RainforestBestSellers extends RainforestEntityCommon
         /** @var BestSellersResponse $rfResponse */
         $this->setRainforestResponse($rfResponse);
 
-        $this->url = $rfResponse->getReqParam('url');
+        $this->setUrl($rfResponse->getReqParam('url'));
 
         if ($rfResponse->getSearchResultCount()) {
-            $this->page = $rfResponse->getCurrentPage();
-            $this->totalPages = $rfResponse->getTotalPages();
+            $this->setPage($rfResponse->getCurrentPage());
+            $this->setTotalPages($rfResponse->getTotalPages());
 
             foreach ($rfResponse->getSearchResults() as $key => $searchResultArray) {
                 $this->addSearchResultFromArray($searchResultArray);
@@ -62,12 +56,38 @@ class RainforestBestSellers extends RainforestEntityCommon
      */
     protected $searchResults = [];
 
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
     public function getUrl() {
         return $this->url;
     }
 
-    public function getCurrentPage() {
+    public function setPage($page)
+    {
+        $this->page = $page;
+
+        return $this;
+    }
+    public function getPage()
+    {
         return $this->page;
+    }
+    public function setTotalPages($totalPages)
+    {
+        $this->totalPages = $totalPages;
+
+        return $this;
+    }
+    /**
+     * Alias for getPage()
+     * @return int
+     */
+    public function getCurrentPage() {
+        return $this->getPage();
     }
     public function getTotalPages() {
         return $this->totalPages;
@@ -93,7 +113,7 @@ class RainforestBestSellers extends RainforestEntityCommon
      * @return RainforestSearchResult[]
      */
     public function getBestSellerResults() {
-        return $this->searchResults;
+        return $this->getSearchResults();
     }
     /**
      * Alias for getSearchResult()
@@ -103,9 +123,8 @@ class RainforestBestSellers extends RainforestEntityCommon
      * @return RainforestSearchResult
      */
     public function getBestSellerResult($index) {
-        return $this->searchResults[$index];
+        return $this->getSearchResult($index);
     }
-
     /**
      * Alias for getSearchResultCount()
      *
@@ -113,6 +132,6 @@ class RainforestBestSellers extends RainforestEntityCommon
      * @return int
      */
     public function getBestSellerResultCount() {
-        return count($this->searchResults);
+        return $this->getSearchResultCount();
     }
 }

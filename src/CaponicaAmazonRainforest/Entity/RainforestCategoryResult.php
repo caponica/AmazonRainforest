@@ -91,8 +91,26 @@ class RainforestCategoryResult
     public function setSponsored($value) {
         $this->sponsored = $value;
     }
+    public function setAddOnItem($addOnItem)
+    {
+        $this->addOnItem = $addOnItem;
+
+        return $this;
+    }
     public function setCategories($value) {
         $this->categories = $value;
+    }
+    public function setBestseller($bestseller)
+    {
+        $this->bestseller = $bestseller;
+
+        return $this;
+    }
+    public function setRating50($rating50)
+    {
+        $this->rating50 = $rating50;
+
+        return $this;
     }
     public function setIsPrime($value) {
         $this->isPrime = $value;
@@ -103,8 +121,156 @@ class RainforestCategoryResult
     public function setReviewsTotal($value) {
         $this->reviewsTotal = $value;
     }
+    public function setPriceCurrency($priceCurrency)
+    {
+        $this->priceCurrency = $priceCurrency;
+
+        return $this;
+    }
+    public function setPriceAmount($priceAmount)
+    {
+        $this->priceAmount = $priceAmount;
+
+        return $this;
+    }
 
     public function setRating50FromRating5($rating5) {
         $this->rating50 = 10 * $rating5;
+    }
+
+    /**
+     * Get position
+     *
+     * @return integer
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+    /**
+     * Get asin
+     *
+     * @return string
+     */
+    public function getAsin()
+    {
+        return $this->asin;
+    }
+    /**
+     * Get link
+     *
+     * @return string
+     */
+    public function getLink()
+    {
+        return $this->link;
+    }
+    /**
+     * Get isPrime
+     *
+     * @return boolean
+     */
+    public function getIsPrime()
+    {
+        return $this->isPrime;
+    }
+    /**
+     * Get image
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+    /**
+     * Get sponsored
+     *
+     * @return boolean
+     */
+    public function getSponsored()
+    {
+        return $this->sponsored;
+    }
+    /**
+     * Get addOnItem
+     *
+     * @return boolean
+     */
+    public function getAddOnItem()
+    {
+        return $this->addOnItem;
+    }
+    /**
+     * Get categories
+     *
+     * @return string
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+    /**
+     * Get bestseller
+     *
+     * @return string
+     */
+    public function getBestseller()
+    {
+        return $this->bestseller;
+    }
+    /**
+     * Get rating50
+     *
+     * @return integer
+     */
+    public function getRating50()
+    {
+        return $this->rating50;
+    }
+    /**
+     * Get ratingsTotal
+     *
+     * @return integer
+     */
+    public function getRatingsTotal()
+    {
+        return $this->ratingsTotal;
+    }
+    /**
+     * Get reviewsTotal
+     *
+     * @return integer
+     */
+    public function getReviewsTotal()
+    {
+        return $this->reviewsTotal;
+    }
+    /**
+     * Get priceCurrency
+     *
+     * @return string
+     */
+    public function getPriceCurrency()
+    {
+        return $this->priceCurrency;
+    }
+    /**
+     * Get priceAmount
+     *
+     * @return string
+     */
+    public function getPriceAmount()
+    {
+        return $this->priceAmount;
     }
 }

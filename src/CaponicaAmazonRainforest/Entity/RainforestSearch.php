@@ -31,13 +31,13 @@ class RainforestSearch extends RainforestEntityCommon
 
         $this->setSearchTerm($rfResponse->getReqParam('search_term'));
         $this->setMarketplace($rfResponse->getMarketplaceSuffix());
-        $this->categoryIdFilter = $rfResponse->getReqParam('category_id');
-        $this->url = $rfResponse->getReqParam('url');
-        $this->sortBy = $rfResponse->getReqParam('sort_by');
+        $this->setCategoryIdFilter($rfResponse->getReqParam('category_id'));
+        $this->setUrl($rfResponse->getReqParam('url'));
+        $this->setSortBy($rfResponse->getReqParam('sort_by'));
 
         if ($rfResponse->getSearchResultCount()) {
-            $this->page = $rfResponse->getCurrentPage();
-            $this->totalPages = $rfResponse->getTotalPages();
+            $this->setPage($rfResponse->getCurrentPage());
+            $this->setTotalPages($rfResponse->getTotalPages());
 
             foreach ($rfResponse->getSearchResults() as $key => $searchResultArray) {
                 $this->addSearchResultFromArray($searchResultArray);
@@ -83,6 +83,78 @@ class RainforestSearch extends RainforestEntityCommon
      * @var RainforestSearchResult[]
      */
     protected $searchResults = [];
+
+    /**
+     * Set categoryIdFilter
+     *
+     * @param integer $categoryIdFilter
+     *
+     * @return RainforestSearch
+     */
+    public function setCategoryIdFilter($categoryIdFilter)
+    {
+        $this->categoryIdFilter = $categoryIdFilter;
+
+        return $this;
+    }
+
+    /**
+     * Get categoryIdFilter
+     *
+     * @return integer
+     */
+    public function getCategoryIdFilter()
+    {
+        return $this->categoryIdFilter;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     *
+     * @return RainforestSearch
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set sortBy
+     *
+     * @param string $sortBy
+     *
+     * @return RainforestSearch
+     */
+    public function setSortBy($sortBy)
+    {
+        $this->sortBy = $sortBy;
+
+        return $this;
+    }
+
+    /**
+     * Get sortBy
+     *
+     * @return string
+     */
+    public function getSortBy()
+    {
+        return $this->sortBy;
+    }
 
     /**
      * Set searchTerm
@@ -132,18 +204,47 @@ class RainforestSearch extends RainforestEntityCommon
         return $this->marketplace;
     }
 
-    public function getCategoryIdFilter() {
-        return $this->categoryIdFilter;
-    }
-    public function getUrl() {
-        return $this->url;
-    }
-    public function getSortBy() {
-        return $this->sortBy;
-    }
+    /**
+     * Set page
+     *
+     * @param integer $page
+     *
+     * @return RainforestSearch
+     */
+    public function setPage($page)
+    {
+        $this->page = $page;
 
-    public function getCurrentPage() {
+        return $this;
+    }
+    /**
+     * Get page
+     *
+     * @return integer
+     */
+    public function getPage()
+    {
         return $this->page;
+    }
+    /**
+     * Set totalPages
+     *
+     * @param integer $totalPages
+     *
+     * @return RainforestSearch
+     */
+    public function setTotalPages($totalPages)
+    {
+        $this->totalPages = $totalPages;
+
+        return $this;
+    }
+    /**
+     * Alias for getPage()
+     * @return int
+     */
+    public function getCurrentPage() {
+        return $this->getPage();
     }
     public function getTotalPages() {
         return $this->totalPages;

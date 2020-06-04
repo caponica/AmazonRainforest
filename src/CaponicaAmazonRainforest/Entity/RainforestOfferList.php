@@ -32,11 +32,11 @@ class RainforestOfferList extends RainforestEntityCommon
 
         $this->setAsin($rfResponse->getAsin());
         $this->setMarketplace($rfResponse->getMarketplaceSuffix());
-        $this->filters = $rfResponse->getsFiltersArray();
+        $this->setFilters($rfResponse->getFiltersArray());
 
         if ($rfResponse->getOffersCount()) {
-            $this->page = $rfResponse->getCurrentPage();
-            $this->totalPages = $rfResponse->getTotalPages();
+            $this->setPage($rfResponse->getCurrentPage());
+            $this->setTotalPages($rfResponse->getTotalPages());
 
             foreach ($rfResponse->getOffers() as $key => $offerArray) {
                 $this->addOfferFromArray($offerArray);
@@ -89,7 +89,6 @@ class RainforestOfferList extends RainforestEntityCommon
 
         return $this;
     }
-
     /**
      * Get asin
      *
@@ -99,6 +98,7 @@ class RainforestOfferList extends RainforestEntityCommon
     {
         return $this->asin;
     }
+
     /**
      * Set marketplace
      *
@@ -112,7 +112,6 @@ class RainforestOfferList extends RainforestEntityCommon
 
         return $this;
     }
-
     /**
      * Get marketplace
      *
@@ -123,6 +122,19 @@ class RainforestOfferList extends RainforestEntityCommon
         return $this->marketplace;
     }
 
+    /**
+     * Set filters
+     *
+     * @param array $filters
+     *
+     * @return RainforestOfferList
+     */
+    public function setFilters($filters)
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
     public function getFilters() {
         return $this->filters;
     }
@@ -130,8 +142,47 @@ class RainforestOfferList extends RainforestEntityCommon
         return OfferRequest::convertFilterToString($this->filters);
     }
 
-    public function getCurrentPage() {
+    /**
+     * Set page
+     *
+     * @param integer $page
+     *
+     * @return RainforestOfferList
+     */
+    public function setPage($page)
+    {
+        $this->page = $page;
+
+        return $this;
+    }
+    /**
+     * Get page
+     *
+     * @return integer
+     */
+    public function getPage()
+    {
         return $this->page;
+    }
+    /**
+     * Set totalPages
+     *
+     * @param integer $totalPages
+     *
+     * @return RainforestOfferList
+     */
+    public function setTotalPages($totalPages)
+    {
+        $this->totalPages = $totalPages;
+
+        return $this;
+    }
+    /**
+     * Alias for getPage()
+     * @return int
+     */
+    public function getCurrentPage() {
+        return $this->getPage();
     }
     public function getTotalPages() {
         return $this->totalPages;

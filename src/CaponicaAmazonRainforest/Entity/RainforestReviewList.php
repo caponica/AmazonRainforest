@@ -32,11 +32,12 @@ class RainforestReviewList extends RainforestEntityCommon
 
         $this->setAsin($rfResponse->getAsin());
         $this->setMarketplace($rfResponse->getMarketplaceSuffix());
-        $this->filters = $rfResponse->getsFiltersArray();
+        $this->setFilters($rfResponse->getFiltersArray());
+        $this->setSearchTerm($rfResponse->getReqParam('search_term'));
 
         if ($rfResponse->getReviewsCount()) {
-            $this->page = $rfResponse->getCurrentPage();
-            $this->totalPages = $rfResponse->getTotalPages();
+            $this->setPage($rfResponse->getCurrentPage());
+            $this->setTotalPages($rfResponse->getTotalPages());
 
             foreach ($rfResponse->getReviews() as $key => $reviewArray) {
                 $this->addReviewFromArray($reviewArray);
@@ -76,6 +77,10 @@ class RainforestReviewList extends RainforestEntityCommon
      */
     protected $filters;
     /**
+     * @var string
+     */
+    private $searchTerm;
+    /**
      * @var int
      */
     protected $page;
@@ -110,16 +115,6 @@ class RainforestReviewList extends RainforestEntityCommon
 
         return $this;
     }
-
-    /**
-     * Get asin
-     *
-     * @return string
-     */
-    public function getAsin()
-    {
-        return $this->asin;
-    }
     /**
      * Set marketplace
      *
@@ -133,7 +128,42 @@ class RainforestReviewList extends RainforestEntityCommon
 
         return $this;
     }
+    /**
+     * Set filters
+     *
+     * @param array $filters
+     *
+     * @return RainforestReviewList
+     */
+    public function setFilters($filters)
+    {
+        $this->filters = $filters;
 
+        return $this;
+    }
+    /**
+     * Set searchTerm
+     *
+     * @param string $searchTerm
+     *
+     * @return RainforestReviewList
+     */
+    public function setSearchTerm($searchTerm)
+    {
+        $this->searchTerm = $searchTerm;
+
+        return $this;
+    }
+
+    /**
+     * Get asin
+     *
+     * @return string
+     */
+    public function getAsin()
+    {
+        return $this->asin;
+    }
     /**
      * Get marketplace
      *
@@ -143,16 +173,58 @@ class RainforestReviewList extends RainforestEntityCommon
     {
         return $this->marketplace;
     }
-
     public function getFilters() {
         return $this->filters;
     }
     public function getFiltersString() {
         return ReviewRequest::convertFilterToString($this->filters);
     }
+    public function getSearchTerm()
+    {
+        return $this->searchTerm;
+    }
 
-    public function getCurrentPage() {
+    /**
+     * Set page
+     *
+     * @param integer $page
+     *
+     * @return RainforestReviewList
+     */
+    public function setPage($page)
+    {
+        $this->page = $page;
+
+        return $this;
+    }
+    /**
+     * Get page
+     *
+     * @return integer
+     */
+    public function getPage()
+    {
         return $this->page;
+    }
+    /**
+     * Set totalPages
+     *
+     * @param integer $totalPages
+     *
+     * @return RainforestReviewList
+     */
+    public function setTotalPages($totalPages)
+    {
+        $this->totalPages = $totalPages;
+
+        return $this;
+    }
+    /**
+     * Alias for getPage()
+     * @return int
+     */
+    public function getCurrentPage() {
+        return $this->getPage();
     }
     public function getTotalPages() {
         return $this->totalPages;

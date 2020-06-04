@@ -58,7 +58,7 @@ class RainforestOffer
      * @param array $data       Raw array of data from the API
      */
     public function updateFromDataArray($data) {
-        $this->data = $data;
+        $this->setData($data);
 
         if (!empty($data['is_prime'])) {
             $this->setIsPrime(true);
@@ -134,6 +134,11 @@ class RainforestOffer
     public function getOriginalDataArray() {
         return $this->data;
     }
+    protected function setData($value) {
+        $this->data = $value;
+        return $this;
+    }
+
     public function setIsPrime($value) {
         $this->isPrime = $value;
         return $this;
@@ -209,5 +214,177 @@ class RainforestOffer
     public function setSellerPositiveRatings100($value) {
         $this->sellerPositiveRatings100 = $value;
         return $this;
+    }
+
+    /**
+     * Get isPrime
+     *
+     * @return boolean
+     */
+    public function getIsPrime()
+    {
+        return $this->isPrime;
+    }
+    /**
+     * Get priceCurrency
+     *
+     * @return string
+     */
+    public function getPriceCurrency()
+    {
+        return $this->priceCurrency;
+    }
+    /**
+     * Get priceAmount
+     *
+     * @return string
+     */
+    public function getPriceAmount()
+    {
+        return $this->priceAmount;
+    }
+    /**
+     * Get importFeeCurrency
+     *
+     * @return string
+     */
+    public function getImportFeeCurrency()
+    {
+        return $this->importFeeCurrency;
+    }
+    /**
+     * Get importFeeAmount
+     *
+     * @return string
+     */
+    public function getImportFeeAmount()
+    {
+        return $this->importFeeAmount;
+    }
+    /**
+     * Get conditionIsNew
+     *
+     * @return boolean
+     */
+    public function getConditionIsNew()
+    {
+        return $this->conditionIsNew;
+    }
+    /**
+     * Get conditionTitle
+     *
+     * @return string
+     */
+    public function getConditionTitle()
+    {
+        return $this->conditionTitle;
+    }
+    /**
+     * Get conditionComments
+     *
+     * @return string
+     */
+    public function getConditionComments()
+    {
+        return $this->conditionComments;
+    }
+    /**
+     * Get deliveryIsFree
+     *
+     * @return boolean
+     */
+    public function getDeliveryIsFree()
+    {
+        return $this->deliveryIsFree;
+    }
+    /**
+     * Get deliveryIsFba
+     *
+     * @return boolean
+     */
+    public function getDeliveryIsFba()
+    {
+        return $this->deliveryIsFba;
+    }
+    /**
+     * Get deliveryIsShippedCrossBorder
+     *
+     * @return boolean
+     */
+    public function getDeliveryIsShippedCrossBorder()
+    {
+        return $this->deliveryIsShippedCrossBorder;
+    }
+    /**
+     * Get deliveryComments
+     *
+     * @return string
+     */
+    public function getDeliveryComments()
+    {
+        return $this->deliveryComments;
+    }
+    /**
+     * Get deliveryCurrency
+     *
+     * @return string
+     */
+    public function getDeliveryCurrency()
+    {
+        return $this->deliveryCurrency;
+    }
+    /**
+     * Get deliveryAmount
+     *
+     * @return string
+     */
+    public function getDeliveryAmount()
+    {
+        return $this->deliveryAmount;
+    }
+    /**
+     * Get sellerName
+     *
+     * @return string
+     */
+    public function getSellerName()
+    {
+        return $this->sellerName;
+    }
+    /**
+     * Get sellerLink
+     *
+     * @return string
+     */
+    public function getSellerLink()
+    {
+        return $this->sellerLink;
+    }
+    /**
+     * Get sellerRating50
+     *
+     * @return integer
+     */
+    public function getSellerRating50()
+    {
+        return $this->sellerRating50;
+    }
+    /**
+     * Get sellerRatingsTotal
+     *
+     * @return integer
+     */
+    public function getSellerRatingsTotal()
+    {
+        return $this->sellerRatingsTotal;
+    }
+    /**
+     * Get sellerPositiveRatings100
+     *
+     * @return integer
+     */
+    public function getSellerPositiveRatings100()
+    {
+        return $this->sellerPositiveRatings100;
     }
 }

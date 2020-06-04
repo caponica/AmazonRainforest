@@ -55,7 +55,7 @@ class RainforestReview
      * @param array $data       Raw array of data from the API
      */
     public function updateFromDataArray($data) {
-        $this->data = $data;
+        $this->setData($data);
         $mapping = [
             'id'                    => 'setIdString',
             'title'                 => 'setTitle',
@@ -81,7 +81,7 @@ class RainforestReview
     }
 
     protected function setRatingFromDecimal($decimal) {
-        $this->rating50 = 10 * $decimal;
+        $this->setRating50(10 * $decimal);
     }
     protected function convertDateArrayIntoDateObject($dateArray) {
         if (empty($dateArray) || empty($dateArray['utc'])) {
@@ -97,8 +97,8 @@ class RainforestReview
         $this->setReviewDate($this->convertDateArrayIntoDateObject($dateArray));
     }
     protected function setProfileDetailsFromArray($dateArray) {
-        $this->profileName = isset($dateArray['name']) ? $dateArray['name'] : null;
-        $this->profileLink = isset($dateArray['link']) ? $dateArray['link'] : null;
+        $this->setProfileName(isset($dateArray['name']) ? $dateArray['name'] : null);
+        $this->setProfileLink(isset($dateArray['link']) ? $dateArray['link'] : null);
     }
     protected function setMfgReplyDetailsFromArray($dataArray) {
         $this->setMfgReplyBody(isset($dataArray['body']) ? $dataArray['body'] : null);
@@ -110,6 +110,10 @@ class RainforestReview
     }
 
 
+    protected function setData($value) {
+        $this->data = $value;
+        return $this;
+    }
     public function getOriginalDataArray() {
         return $this->data;
     }
