@@ -23,9 +23,9 @@ class CommonResponse
         $this->data = $rfData;
 
         // omnipresent data:
-        $this->reqInfo              = &$this->data[self::MAIN_KEY_REQUEST_INFO];
-        $this->reqMeta              = &$this->data[self::MAIN_KEY_REQUEST_METADATA];
-        $this->reqParams            = &$this->data[self::MAIN_KEY_REQUEST_PARAMETERS];
+        $this->reqInfo   = &$this->data[self::MAIN_KEY_REQUEST_INFO];
+        $this->reqMeta   = &$this->data[self::MAIN_KEY_REQUEST_METADATA];
+        $this->reqParams = &$this->data[self::MAIN_KEY_REQUEST_PARAMETERS];
     }
 
     public static function getMainKeys() {

@@ -216,10 +216,10 @@ class ReviewResponse extends CommonResponse
         return $this->getProductField('reviews_breakdown');
     }
 
-    public function getsFiltersString() {
-        return ReviewRequest::convertFilterToString($this->getsFiltersArray());
+    public function getFiltersString() {
+        return ReviewRequest::convertFilterToString($this->getFiltersArray());
     }
-    public function getsFiltersArray() {
+    public function getFiltersArray() {
         $filters = [];
         foreach (ReviewRequest::getStaticFilterKeys() as $key) {
             $paramValue = $this->getReqParam($key);

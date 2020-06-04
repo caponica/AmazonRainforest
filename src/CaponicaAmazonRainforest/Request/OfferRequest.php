@@ -109,10 +109,10 @@ class OfferRequest extends CommonRequest
         return RainforestClient::REQUEST_TYPE_OFFERS;
     }
 
-    public function getsFiltersString() {
-        return self::convertFilterToString($this->getsFiltersArray());
+    public function getFiltersString() {
+        return self::convertFilterToString($this->getFiltersArray());
     }
-    public function getsFiltersArray() {
+    public function getFiltersArray() {
         $filters = [];
         foreach ($this->getFilterKeys() as $key) {
             if (is_null($this->$key)) {
@@ -155,7 +155,7 @@ class OfferRequest extends CommonRequest
         } else {
             throw new \InvalidArgumentException('Could not create a key for the OfferRequest - it must contain amazon_domain + asin, or an URL');
         }
-        $key .= '~' . $this->getsFiltersString() . '~' . $this->page;
+        $key .= '~' . $this->getFiltersString() . '~' . $this->page;
         return $key;
     }
 }

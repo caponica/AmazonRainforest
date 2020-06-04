@@ -132,10 +132,10 @@ class OfferResponse extends CommonResponse
         return $this->getProductField('attributes');
     }
 
-    public function getsFiltersString() {
-        return OfferRequest::convertFilterToString($this->getsFiltersArray());
+    public function getFiltersString() {
+        return OfferRequest::convertFilterToString($this->getFiltersArray());
     }
-    public function getsFiltersArray() {
+    public function getFiltersArray() {
         $filters = [];
         foreach (OfferRequest::getStaticFilterKeys() as $key) {
             $paramValue = $this->getReqParam($key);

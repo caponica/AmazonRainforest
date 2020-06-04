@@ -127,10 +127,10 @@ class ReviewRequest extends CommonRequest
         ];
     }
 
-    public function getsFiltersString() {
-        return self::convertFilterToString($this->getsFiltersArray());
+    public function getFiltersString() {
+        return self::convertFilterToString($this->getFiltersArray());
     }
-    public function getsFiltersArray() {
+    public function getFiltersArray() {
         $filters = [];
         foreach ($this->getFilterKeys() as $key) {
             if (is_null($this->$key)) {
@@ -211,7 +211,7 @@ class ReviewRequest extends CommonRequest
             throw new \InvalidArgumentException('Could not create a key for the ReviewRequest - it must contain an Amazon Domain + ASIN/GTIN, or an URL');
         }
 
-        $key .= '~' . $this->getsFiltersString() . '~' . $this->page . '~' . $this->search_term;
+        $key .= '~' . $this->getFiltersString() . '~' . $this->page . '~' . $this->search_term;
 
         return $key;
     }
