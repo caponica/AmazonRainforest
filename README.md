@@ -38,7 +38,7 @@ The API calls return objects with cleaned up data and sane accessors.
 Integrating with your own code
 ==============================
 
-The Rainforest code should use methods to manipulate its objects. This means that you can extend the Rainforest object classes, then pass your versions through to the API and it will use your versions.
+The code in this library uses methods to manipulate its objects. This means that you can extend the Rainforest object classes, then pass your versions through to the API and it will use your versions.
 
 For example: We use Symfony and Doctrine in our own main code base. Our Doctrine classes extend the Rainforest ones:
 
@@ -134,7 +134,9 @@ About the Author
 
 Package created and maintained by Christian Morgan.
 
-I'm a well-established Amazon/e-commerce entrepreneur and co-founder of ScaleForEtail. If you are also an Amazon brand owner or seller then you're welcome to [join the ScaleForEtail community](https://facebook.com/groups/scaleforetail/). We organise [webinars](https://app.livestorm.co/scaleforetail/) and live events - and bring like-minded people together. Drop by and check us out today! https://facebook.com/groups/scaleforetail/
+I'm a well-established Amazon/e-commerce entrepreneur and co-founder of ScaleForEtail. If you are also an Amazon brand owner or seller then you're welcome to [join the ScaleForEtail community](https://facebook.com/groups/scaleforetail/). We organise [webinars](https://app.livestorm.co/scaleforetail/) and live events for the e-commerce community. In short: we bring like-minded people together.
+
+Drop by and check us out today! https://facebook.com/groups/scaleforetail/
 
 Bugs and Feature Requests
 =========================
