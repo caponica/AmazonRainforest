@@ -56,7 +56,6 @@ class RainforestReview
      */
     public function updateFromDataArray($data) {
         $this->data = $data;
-
         $mapping = [
             'id'                    => 'setIdString',
             'title'                 => 'setTitle',
@@ -75,6 +74,8 @@ class RainforestReview
         foreach ($mapping as $dataField => $setter) {
             if (isset($data[$dataField])) {
                 $this->$setter($data[$dataField]);
+            } else {
+                $this->$setter(null);
             }
         }
     }
