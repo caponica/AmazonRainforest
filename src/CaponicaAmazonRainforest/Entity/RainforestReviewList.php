@@ -79,7 +79,7 @@ class RainforestReviewList extends RainforestEntityCommon
     /**
      * @var string
      */
-    private $searchTerm;
+    protected $searchTerm;
     /**
      * @var int
      */
