@@ -37,11 +37,17 @@ class RainforestReview
     protected $idString;
     protected $title;
     protected $body;
+//    protected $images;
+//    protected $videos;
     protected $link;
     protected $rating50;
     protected $helpfulVotes;
     protected $comments;
+    protected $reviewCountry;
+    protected $isGlobalReview;
     protected $verifiedPurchase;
+    protected $vineProgram;
+    protected $vineProgramFree;
     protected $attributes;
     protected $reviewDate;
     protected $profileName;
@@ -57,18 +63,22 @@ class RainforestReview
     public function updateFromDataArray($data) {
         $this->setData($data);
         $mapping = [
-            'id'                    => 'setIdString',
-            'title'                 => 'setTitle',
-            'body'                  => 'setBody',
-            'link'                  => 'setLink',
-            'rating'                => 'setRatingFromDecimal',
-            'helpful_votes'         => 'setHelpfulVotes',
-            'comments'              => 'setComments',
-            'verified_purchase'     => 'setVerifiedPurchase',
-            'attributes'            => 'setAttributes',
-            'date'                  => 'setReviewDateFromArray',
-            'profile'               => 'setProfileDetailsFromArray',
-            'manufacturer_reply'    => 'setMfgReplyDetailsFromArray',
+            'id'                        => 'setIdString',
+            'title'                     => 'setTitle',
+            'body'                      => 'setBody',
+            'link'                      => 'setLink',
+            'rating'                    => 'setRatingFromDecimal',
+            'helpful_votes'             => 'setHelpfulVotes',
+            'comments'                  => 'setComments',
+            'review_country'            => 'setReviewCountry',
+            'is_global_review'          => 'setIsGlobalReview',
+            'verified_purchase'         => 'setVerifiedPurchase',
+            'vine_program'              => 'setVineProgram',
+            'vine_program_free_product' => 'setVineProgramFree',
+            'attributes'                => 'setAttributes',
+            'date'                      => 'setReviewDateFromArray',
+            'profile'                   => 'setProfileDetailsFromArray',
+            'manufacturer_reply'        => 'setMfgReplyDetailsFromArray',
         ];
 
         foreach ($mapping as $dataField => $setter) {
@@ -146,8 +156,24 @@ class RainforestReview
         $this->comments = $value;
         return $this;
     }
+    public function setReviewCountry($value) {
+        $this->reviewCountry = $value;
+        return $this;
+    }
+    public function setIsGlobalReview($value) {
+        $this->isGlobalReview = $value;
+        return $this;
+    }
     public function setVerifiedPurchase($value) {
         $this->verifiedPurchase = $value;
+        return $this;
+    }
+    public function setVineProgram($value) {
+        $this->vineProgram = $value;
+        return $this;
+    }
+    public function setVineProgramFree($value) {
+        $this->vineProgramFree = $value;
         return $this;
     }
     public function setAttributes($value) {
@@ -255,6 +281,26 @@ class RainforestReview
     }
 
     /**
+     * Get reviewCountry
+     *
+     * @return string
+     */
+    public function getReviewCountry()
+    {
+        return $this->reviewCountry;
+    }
+
+    /**
+     * Get isGlobalReview
+     *
+     * @return boolean
+     */
+    public function getIsGlobalReview()
+    {
+        return $this->isGlobalReview;
+    }
+
+    /**
      * Get verifiedPurchase
      *
      * @return boolean
@@ -262,6 +308,26 @@ class RainforestReview
     public function getVerifiedPurchase()
     {
         return $this->verifiedPurchase;
+    }
+
+    /**
+     * Get vineProgram
+     *
+     * @return boolean
+     */
+    public function getVineProgram()
+    {
+        return $this->vineProgram;
+    }
+
+    /**
+     * Get vineProgramFree
+     *
+     * @return boolean
+     */
+    public function getVineProgramFree()
+    {
+        return $this->vineProgramFree;
     }
 
     /**
