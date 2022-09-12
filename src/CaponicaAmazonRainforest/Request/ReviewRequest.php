@@ -25,7 +25,12 @@ class ReviewRequest extends CommonRequest
     protected $url = null;
 
     protected $gtin = null;
+    protected $skip_gtin_cache = null;
+    protected $global_reviews = null;
+    protected $show_different_asins = null;
     protected $search_term = null;
+    protected $review_id = null;
+    protected $max_page = 1;
     protected $page = 1;
 
     protected $reviewer_type = null;
@@ -83,13 +88,18 @@ class ReviewRequest extends CommonRequest
     public function getOptionKeys() {
         return [
             'gtin',
+            'skip_gtin_cache',
             'reviewer_type',
             'review_stars',
             'review_formats',
             'review_media_type',
             'sort_by',
+            'global_reviews',
             'search_term',
+            'show_different_asins',
             'page',
+            'max_page',
+            'review_id',
         ];
     }
 
