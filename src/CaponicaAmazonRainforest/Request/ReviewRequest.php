@@ -40,8 +40,13 @@ class ReviewRequest extends CommonRequest
     protected $sort_by = null;
 
     const OPTION_GTIN                       = 'gtin';
-    const OPTION_SEARCH_TERM                = 'search_term';
+    const OPTION_SKIP_GTIN_CACHE            = 'skip_gtin_cache';
+    const OPTION_GLOBAL_REVIEWS             = 'global_reviews';
+    const OPTION_MAX_PAGE                   = 'max_page';
     const OPTION_PAGE                       = 'page';
+    const OPTION_REVIEW_ID                  = 'review_id';
+    const OPTION_SEARCH_TERM                = 'search_term';
+    const OPTION_SHOW_DIFFERENT_ASINS       = 'show_different_asins';
     const OPTION_FILTER_REVIEWER_TYPE       = 'reviewer_type';
     const OPTION_FILTER_REVIEW_STARS        = 'review_stars';
     const OPTION_FILTER_REVIEW_FORMATS      = 'review_formats';
