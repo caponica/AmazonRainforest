@@ -21,7 +21,7 @@ class RainforestReview
     /**
      * @param array|null $data
      */
-    public function __construct($data = null) {
+    public function __construct(?array $data = null) {
         if (!empty($data)) {
             $this->updateFromDataArray($data);
         }
@@ -32,35 +32,35 @@ class RainforestReview
      *
      * @var array $data
      */
-    protected $data;
+    protected array $data;
 
-    protected $idString;
-    protected $title;
-    protected $body;
+    protected ?string $idString;
+    protected ?string $title;
+    protected ?string $body;
 //    protected $images;
 //    protected $videos;
-    protected $link;
-    protected $rating50;
-    protected $helpfulVotes;
-    protected $comments;
-    protected $reviewCountry;
-    protected $isGlobalReview;
-    protected $verifiedPurchase;
-    protected $vineProgram;
-    protected $vineProgramFree;
-    protected $attributes;
-    protected $reviewDate;
-    protected $profileName;
-    protected $profileLink;
-    protected $mfgReplyBody;
-    protected $mfgReplyDate;
-    protected $mfgReplyProfileName;
-    protected $mfgReplyProfileLink;
+    protected ?string $link;
+    protected ?int $rating50;
+    protected ?int $helpfulVotes;
+    protected ?int $comments;
+    protected ?string $reviewCountry;
+    protected ?bool $isGlobalReview;
+    protected ?bool $verifiedPurchase;
+    protected ?bool $vineProgram;
+    protected ?bool $vineProgramFree;
+    protected ?array $attributes;
+    protected ?\DateTime $reviewDate;
+    protected ?string $profileName;
+    protected ?string $profileLink;
+    protected ?string $mfgReplyBody;
+    protected ?\DateTime $mfgReplyDate;
+    protected ?string $mfgReplyProfileName;
+    protected ?string $mfgReplyProfileLink;
 
     /**
      * @param array $data       Raw array of data from the API
      */
-    public function updateFromDataArray($data) {
+    public function updateFromDataArray(array $data) {
         $this->setData($data);
         $mapping = [
             'id'                        => 'setIdString',
@@ -93,7 +93,8 @@ class RainforestReview
     protected function setRatingFromDecimal($decimal) {
         $this->setRating50(10 * $decimal);
     }
-    protected function convertDateArrayIntoDateObject($dateArray) {
+    protected function convertDateArrayIntoDateObject($dateArray): ?\DateTime
+    {
         if (empty($dateArray) || empty($dateArray['utc'])) {
             return null;
         }
@@ -107,104 +108,126 @@ class RainforestReview
         $this->setReviewDate($this->convertDateArrayIntoDateObject($dateArray));
     }
     protected function setProfileDetailsFromArray($dateArray) {
-        $this->setProfileName(isset($dateArray['name']) ? $dateArray['name'] : null);
-        $this->setProfileLink(isset($dateArray['link']) ? $dateArray['link'] : null);
+        $this->setProfileName($dateArray['name'] ?? null);
+        $this->setProfileLink($dateArray['link'] ?? null);
     }
     protected function setMfgReplyDetailsFromArray($dataArray) {
-        $this->setMfgReplyBody(isset($dataArray['body']) ? $dataArray['body'] : null);
+        $this->setMfgReplyBody($dataArray['body'] ?? null);
         if (isset($dataArray['date'])) {
             $this->setMfgReplyDate($this->convertDateArrayIntoDateObject($dataArray['date']));
         }
-        $this->setMfgReplyProfileLink(isset($dataArray['profile']['link']) ? $dataArray['profile']['link'] : null);
-        $this->setMfgReplyProfileName(isset($dataArray['profile']['name']) ? $dataArray['profile']['name'] : null);
+        $this->setMfgReplyProfileLink($dataArray['profile']['link'] ?? null);
+        $this->setMfgReplyProfileName($dataArray['profile']['name'] ?? null);
     }
 
 
-    protected function setData($value) {
+    protected function setData($value): static
+    {
         $this->data = $value;
         return $this;
     }
-    public function getOriginalDataArray() {
+    public function getOriginalDataArray(): array
+    {
         return $this->data;
     }
 
-    public function setIdString($value) {
+    public function setIdString($value): static
+    {
         $this->idString = $value;
         return $this;
     }
-    public function setTitle($value) {
+    public function setTitle($value): static
+    {
         $this->title = $value;
         return $this;
     }
-    public function setBody($value) {
+    public function setBody($value): static
+    {
         $this->body = $value;
         return $this;
     }
-    public function setLink($value) {
+    public function setLink($value): static
+    {
         $this->link = $value;
         return $this;
     }
-    public function setRating50($value) {
+    public function setRating50($value): static
+    {
         $this->rating50 = $value;
         return $this;
     }
-    public function setHelpfulVotes($value) {
+    public function setHelpfulVotes($value): static
+    {
         $this->helpfulVotes = $value;
         return $this;
     }
-    public function setComments($value) {
+    public function setComments($value): static
+    {
         $this->comments = $value;
         return $this;
     }
-    public function setReviewCountry($value) {
+    public function setReviewCountry($value): static
+    {
         $this->reviewCountry = $value;
         return $this;
     }
-    public function setIsGlobalReview($value) {
+    public function setIsGlobalReview($value): static
+    {
         $this->isGlobalReview = $value;
         return $this;
     }
-    public function setVerifiedPurchase($value) {
+    public function setVerifiedPurchase($value): static
+    {
         $this->verifiedPurchase = $value;
         return $this;
     }
-    public function setVineProgram($value) {
+    public function setVineProgram($value): static
+    {
         $this->vineProgram = $value;
         return $this;
     }
-    public function setVineProgramFree($value) {
+    public function setVineProgramFree($value): static
+    {
         $this->vineProgramFree = $value;
         return $this;
     }
-    public function setAttributes($value) {
+    public function setAttributes($value): static
+    {
         $this->attributes = $value;
         return $this;
     }
-    public function setReviewDate($value) {
+    public function setReviewDate($value): static
+    {
         $this->reviewDate = $value;
         return $this;
     }
-    public function setProfileName($value) {
+    public function setProfileName($value): static
+    {
         $this->profileName = $value;
         return $this;
     }
-    public function setProfileLink($value) {
+    public function setProfileLink($value): static
+    {
         $this->profileLink = $value;
         return $this;
     }
-    public function setMfgReplyBody($value) {
+    public function setMfgReplyBody($value): static
+    {
         $this->mfgReplyBody = $value;
         return $this;
     }
-    public function setMfgReplyDate($value) {
+    public function setMfgReplyDate($value): static
+    {
         $this->mfgReplyDate = $value;
         return $this;
     }
-    public function setMfgReplyProfileName($value) {
+    public function setMfgReplyProfileName($value): static
+    {
         $this->mfgReplyProfileName = $value;
         return $this;
     }
-    public function setMfgReplyProfileLink($value) {
+    public function setMfgReplyProfileLink($value): static
+    {
         $this->mfgReplyProfileLink = $value;
         return $this;
     }
@@ -213,9 +236,9 @@ class RainforestReview
     /**
      * Get idString
      *
-     * @return string
+     * @return string|null
      */
-    public function getIdString()
+    public function getIdString(): ?string
     {
         return $this->idString;
     }
@@ -223,9 +246,9 @@ class RainforestReview
     /**
      * Get title
      *
-     * @return string
+     * @return string|null
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -233,9 +256,9 @@ class RainforestReview
     /**
      * Get body
      *
-     * @return string
+     * @return string|null
      */
-    public function getBody()
+    public function getBody(): ?string
     {
         return $this->body;
     }
@@ -243,9 +266,9 @@ class RainforestReview
     /**
      * Get link
      *
-     * @return string
+     * @return string|null
      */
-    public function getLink()
+    public function getLink(): ?string
     {
         return $this->link;
     }
@@ -253,9 +276,9 @@ class RainforestReview
     /**
      * Get rating50
      *
-     * @return integer
+     * @return int|null
      */
-    public function getRating50()
+    public function getRating50(): ?int
     {
         return $this->rating50;
     }
@@ -263,9 +286,9 @@ class RainforestReview
     /**
      * Get helpfulVotes
      *
-     * @return integer
+     * @return int|null
      */
-    public function getHelpfulVotes()
+    public function getHelpfulVotes(): ?int
     {
         return $this->helpfulVotes;
     }
@@ -273,9 +296,9 @@ class RainforestReview
     /**
      * Get comments
      *
-     * @return integer
+     * @return int|null
      */
-    public function getComments()
+    public function getComments(): ?int
     {
         return $this->comments;
     }
@@ -283,9 +306,9 @@ class RainforestReview
     /**
      * Get reviewCountry
      *
-     * @return string
+     * @return string|null
      */
-    public function getReviewCountry()
+    public function getReviewCountry(): ?string
     {
         return $this->reviewCountry;
     }
@@ -293,9 +316,9 @@ class RainforestReview
     /**
      * Get isGlobalReview
      *
-     * @return boolean
+     * @return bool|null
      */
-    public function getIsGlobalReview()
+    public function getIsGlobalReview(): ?bool
     {
         return $this->isGlobalReview;
     }
@@ -303,9 +326,9 @@ class RainforestReview
     /**
      * Get verifiedPurchase
      *
-     * @return boolean
+     * @return bool|null
      */
-    public function getVerifiedPurchase()
+    public function getVerifiedPurchase(): ?bool
     {
         return $this->verifiedPurchase;
     }
@@ -313,9 +336,9 @@ class RainforestReview
     /**
      * Get vineProgram
      *
-     * @return boolean
+     * @return bool|null
      */
-    public function getVineProgram()
+    public function getVineProgram(): ?bool
     {
         return $this->vineProgram;
     }
@@ -323,9 +346,9 @@ class RainforestReview
     /**
      * Get vineProgramFree
      *
-     * @return boolean
+     * @return bool|null
      */
-    public function getVineProgramFree()
+    public function getVineProgramFree(): ?bool
     {
         return $this->vineProgramFree;
     }
@@ -333,9 +356,9 @@ class RainforestReview
     /**
      * Get attributes
      *
-     * @return array
+     * @return array|null
      */
-    public function getAttributes()
+    public function getAttributes(): ?array
     {
         return $this->attributes;
     }
@@ -343,9 +366,9 @@ class RainforestReview
     /**
      * Get reviewDate
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getReviewDate()
+    public function getReviewDate(): ?\DateTime
     {
         return $this->reviewDate;
     }
@@ -353,9 +376,9 @@ class RainforestReview
     /**
      * Get profileName
      *
-     * @return string
+     * @return string|null
      */
-    public function getProfileName()
+    public function getProfileName(): ?string
     {
         return $this->profileName;
     }
@@ -363,9 +386,9 @@ class RainforestReview
     /**
      * Get profileLink
      *
-     * @return string
+     * @return string|null
      */
-    public function getProfileLink()
+    public function getProfileLink(): ?string
     {
         return $this->profileLink;
     }
@@ -373,9 +396,9 @@ class RainforestReview
     /**
      * Get mfgReplyBody
      *
-     * @return string
+     * @return string|null
      */
-    public function getMfgReplyBody()
+    public function getMfgReplyBody(): ?string
     {
         return $this->mfgReplyBody;
     }
@@ -383,9 +406,9 @@ class RainforestReview
     /**
      * Get mfgReplyDate
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getMfgReplyDate()
+    public function getMfgReplyDate(): ?\DateTime
     {
         return $this->mfgReplyDate;
     }
@@ -393,9 +416,9 @@ class RainforestReview
     /**
      * Get mfgReplyProfileName
      *
-     * @return string
+     * @return string|null
      */
-    public function getMfgReplyProfileName()
+    public function getMfgReplyProfileName(): ?string
     {
         return $this->mfgReplyProfileName;
     }
@@ -403,9 +426,9 @@ class RainforestReview
     /**
      * Get mfgReplyProfileLink
      *
-     * @return string
+     * @return string|null
      */
-    public function getMfgReplyProfileLink()
+    public function getMfgReplyProfileLink(): ?string
     {
         return $this->mfgReplyProfileLink;
     }

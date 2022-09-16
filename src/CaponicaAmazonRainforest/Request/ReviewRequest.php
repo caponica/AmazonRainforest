@@ -25,20 +25,20 @@ class ReviewRequest extends CommonRequest
     protected ?string $asin = null;
     protected ?string $url = null;
 
-    protected $gtin = null;
-    protected $skip_gtin_cache = null;
-    protected $global_reviews = null;
-    protected $show_different_asins = null;
-    protected $search_term = null;
-    protected $review_id = null;
-    protected $max_page = 1;
-    protected $page = 1;
+    protected ?string $gtin = null;
+    protected null|bool|string $skip_gtin_cache = null;
+    protected null|bool|string $global_reviews = null;
+    protected null|bool|string $show_different_asins = null;
+    protected ?string $search_term = null;
+    protected ?string $review_id = null;
+    protected ?int $max_page = 1;
+    protected ?int $page = 1;
 
-    protected $reviewer_type = null;
-    protected $review_stars = null;
-    protected $review_formats = null;
-    protected $review_media_type = null;
-    protected $sort_by = null;
+    protected ?string $reviewer_type = null; // see ENUM_REVIEWER_TYPE_XYZ
+    protected ?string $review_stars = null; // see ENUM_REVIEW_STARS_XYZ
+    protected ?string $review_formats = null; // see ENUM_REVIEW_FORMAT_XYZ
+    protected ?string $review_media_type = null; // see ENUM_REVIEW_MEDIA_XYZ
+    protected ?string $sort_by = null; // see ENUM_SORT_XYZ
 
     const OPTION_GTIN                       = 'gtin';
     const OPTION_SKIP_GTIN_CACHE            = 'skip_gtin_cache';
@@ -94,19 +94,19 @@ class ReviewRequest extends CommonRequest
     public function getOptionKeys(): array
     {
         return [
-            'gtin',
-            'skip_gtin_cache',
-            'reviewer_type',
-            'review_stars',
-            'review_formats',
-            'review_media_type',
-            'sort_by',
-            'global_reviews',
-            'search_term',
-            'show_different_asins',
-            'page',
-            'max_page',
-            'review_id',
+            self::OPTION_GTIN,
+            self::OPTION_SKIP_GTIN_CACHE,
+            self::OPTION_GLOBAL_REVIEWS,
+            self::OPTION_MAX_PAGE,
+            self::OPTION_PAGE,
+            self::OPTION_REVIEW_ID,
+            self::OPTION_SEARCH_TERM,
+            self::OPTION_SHOW_DIFFERENT_ASINS,
+            self::OPTION_FILTER_REVIEWER_TYPE,
+            self::OPTION_FILTER_REVIEW_STARS,
+            self::OPTION_FILTER_REVIEW_FORMATS,
+            self::OPTION_FILTER_REVIEW_MEDIA_TYPE,
+            self::OPTION_FILTER_SORT_BY,
         ];
     }
 
