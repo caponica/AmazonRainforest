@@ -18,6 +18,7 @@ use CaponicaAmazonRainforest\Response\CommonResponse;
 use CaponicaAmazonRainforest\Service\LoggerService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
+use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
@@ -51,22 +52,19 @@ class RainforestClient
     const REQUEST_TYPE_SEARCH           = 'search';
     const REQUEST_TYPE_STOCK_ESTIMATION = 'stock_estimation';
 
-    /** @var LoggerInterface $logger */
-    protected $logger;
-    /** @var string $apiKey*/
-    private $apiKey;
-    /** @var bool $debugFilePath */
-    private $debugFilePath = null;
+    protected LoggerInterface $logger;
+    private string $apiKey;
+    private mixed $debugFilePath = null;
     /** @var bool $debugInput       Set true to read responses from a file, instead of calling the API */
-    private $debugInput = false;
+    private bool $debugInput = false;
     /** @var bool $debugOutput      Set true to save response to a file */
-    private $debugOutput = false;
+    private bool $debugOutput = false;
 
     /**
      * @param array $config             Must include "api_key" with value. Other options are debug_file_path, debug_input, debug_output.
-     * @param LoggerInterface $logger
+     * @param ?LoggerInterface $logger
      */
-    public function __construct($config, LoggerInterface $logger = null) {
+    public function __construct(array $config, LoggerInterface $logger = null) {
         $this->logger           = $logger;
 
         $this->apiKey           = $config['api_key'];
@@ -85,7 +83,8 @@ class RainforestClient
         }
     }
 
-    public function getValidAmazonSitesArray() {
+    public function getValidAmazonSitesArray(): array
+    {
         return [
             self::AMAZON_SITE_AUSTRALIA,
             self::AMAZON_SITE_BRAZIL,
@@ -103,10 +102,12 @@ class RainforestClient
             self::AMAZON_SITE_USA,
         ];
     }
-    public function isValidAmazonSite($siteString) {
+    #[Pure] public function isValidAmazonSite($siteString): bool
+    {
         return in_array($siteString, $this->getValidAmazonSitesArray());
     }
-    public function getValidAmazonSiteSuffixArray() {
+    public function getValidAmazonSiteSuffixArray(): array
+    {
         return [
             self::AMAZON_SITE_AUSTRALIA     => 'com.au',
             self::AMAZON_SITE_BRAZIL        => 'com.br',
@@ -124,7 +125,8 @@ class RainforestClient
             self::AMAZON_SITE_USA           => 'com',
         ];
     }
-    public function convertAmazonSiteToSuffix($amazonSite) {
+    public function convertAmazonSiteToSuffix($amazonSite): string
+    {
         $suffixes = $this->getValidAmazonSiteSuffixArray();
         if (empty($suffixes[$amazonSite])) {
             throw new \InvalidArgumentException('Unknown Amazon Site: ' . $amazonSite);
@@ -138,7 +140,8 @@ class RainforestClient
      * @param CommonRequest[] $requests    Array keys are ignored from the input array (and are not needed)
      * @return array
      */
-    public function prepareRequestArray($requests) {
+    public function prepareRequestArray(array $requests): array
+    {
         if (!is_array($requests)) {
             $requests = [ $requests ];
         }
@@ -153,104 +156,102 @@ class RainforestClient
 
     /**
      * @param BestSellersRequest|BestSellersRequest[] $requests             The BestSellersRequest(s) to process and retrieve.
-     * @param RainforestBestSellers|RainforestBestSellers[] $rfBestSellers  RainforestBestSellers object (or Array indexed by getKey()).
+     * @param RainforestBestSellers|RainforestBestSellers[]|null $rfBestSellers  RainforestBestSellers object (or Array indexed by getKey()).
      *                                                                      If set then they will be updated from the response,
      *                                                                      instead of creating new ones.
      * @return RainforestBestSellers[]
      * @throws \Exception
      */
-    public function retrieveBestSellers($requests, $rfBestSellers=null) {
+    public function retrieveBestSellers(BestSellersRequest|array $requests, array|RainforestBestSellers $rfBestSellers=null): array
+    {
         /** @var RainforestBestSellers[] $bestSellers */
         $bestSellers = $this->retrieveObjects(BestSellersRequest::getReflectionArray(), $requests, $rfBestSellers);
         return $bestSellers;
     }
     /**
      * @param CategoryRequest|CategoryRequest[] $requests           The CategoryRequest(s) to process and retrieve.
-     * @param RainforestCategory|RainforestCategory[] $rfCats       RainforestCategory object (or Array indexed by getKey()).
+     * @param RainforestCategory|RainforestCategory[]|null $rfCats       RainforestCategory object (or Array indexed by getKey()).
      *                                                              If set then they will be updated from the response,
      *                                                              instead of creating new ones.
      * @return RainforestCategory[]
      * @throws \Exception
      */
-    public function retrieveCategories($requests, $rfCats=null) {
-        /** @var RainforestCategory[] $cats*/
-        $cats = $this->retrieveObjects(CategoryRequest::getReflectionArray(), $requests, $rfCats);
-        return $cats;
+    public function retrieveCategories(CategoryRequest|array $requests, array|RainforestCategory $rfCats=null): array
+    {
+        return $this->retrieveObjects(CategoryRequest::getReflectionArray(), $requests, $rfCats);
     }
     /**
      * @param OfferRequest|OfferRequest[] $requests                 The OfferRequest(s) to process and retrieve.
-     * @param RainforestOffer|RainforestOffer[] $rfOffers           RainforestOffer object (or Array indexed by getKey()).
+     * @param RainforestOffer|RainforestOffer[]|null $rfOffers           RainforestOffer object (or Array indexed by getKey()).
      *                                                              If set then they will be updated from the response,
      *                                                              instead of creating new ones.
      * @return RainforestOffer[]
      * @throws \Exception
      */
-    public function retrieveOffers($requests, $rfOffers=null) {
-        /** @var RainforestOffer[] $offers */
-        $offers = $this->retrieveObjects(OfferRequest::getReflectionArray(), $requests, $rfOffers);
-        return $offers;
+    public function retrieveOffers(OfferRequest|array $requests, array|RainforestOffer $rfOffers=null): array
+    {
+        return $this->retrieveObjects(OfferRequest::getReflectionArray(), $requests, $rfOffers);
     }
     /**
      * @param ProductRequest|ProductRequest[] $requests             The ProductRequest(s) to process and retrieve.
-     * @param RainforestProduct|RainforestProduct[] $rfProducts     RainforestProduct object (or Array indexed by getKey()).
+     * @param RainforestProduct|RainforestProduct[]|null $rfProducts     RainforestProduct object (or Array indexed by getKey()).
      *                                                              If set then they will be updated from the response,
      *                                                              instead of creating new ones.
      * @return RainforestProduct[]
      * @throws \Exception
      */
-    public function retrieveProducts($requests, $rfProducts=null) {
+    public function retrieveProducts(ProductRequest|array $requests, RainforestProduct|array $rfProducts=null): array
+    {
         /** @var RainforestProduct[] $products */
         $products = $this->retrieveObjects(ProductRequest::getReflectionArray(), $requests, $rfProducts);
         return $products;
     }
     /**
      * @param ReviewRequest|ReviewRequest[] $requests               The ReviewRequest(s) to process and retrieve.
-     * @param RainforestReview|RainforestReview[] $rfReviews        RainforestReview object (or Array indexed by getKey()).
+     * @param RainforestReview|RainforestReview[]|null $rfReviews        RainforestReview object (or Array indexed by getKey()).
      *                                                              If set then they will be updated from the response,
      *                                                              instead of creating new ones.
-     * @return RainforestReview[]
+     * @return RainforestReviewList[]
      * @throws \Exception
      */
-    public function retrieveReviews($requests, $rfReviews=null) {
-        /** @var RainforestReview[] $reviews */
-        $reviews = $this->retrieveObjects(ReviewRequest::getReflectionArray(), $requests, $rfReviews);
-        return $reviews;
+    public function retrieveReviews(array|ReviewRequest $requests, RainforestReview|array $rfReviews=null): array
+    {
+        return $this->retrieveObjects(ReviewRequest::getReflectionArray(), $requests, $rfReviews);
     }
     /**
      * @param SearchRequest|SearchRequest[] $requests               The SearchRequest(s) to process and retrieve.
-     * @param RainforestSearch|RainforestSearch[] $rfSearches       RainforestSearch object (or Array indexed by getKey()).
+     * @param RainforestSearch|RainforestSearch[]|null $rfSearches       RainforestSearch object (or Array indexed by getKey()).
      *                                                              If set then they will be updated from the response,
      *                                                              instead of creating new ones.
      * @return RainforestSearch[]
      * @throws \Exception
      */
-    public function retrieveSearches($requests, $rfSearches=null) {
-        /** @var RainforestSearch[] $searches */
-        $searches = $this->retrieveObjects(SearchRequest::getReflectionArray(), $requests, $rfSearches);
-        return $searches;
+    public function retrieveSearches(array|SearchRequest $requests, RainforestSearch|array $rfSearches=null): array
+    {
+        return $this->retrieveObjects(SearchRequest::getReflectionArray(), $requests, $rfSearches);
     }
     /**
      * @param StockEstimationRequest|StockEstimationRequest[] $requests         The StockEstimationRequest(s) to process and retrieve.
-     * @param RainforestStockEstimation|RainforestStockEstimation[] $rfObjects  RainforestStockEstimation object (or Array indexed by getKey()).
+     * @param RainforestStockEstimation|RainforestStockEstimation[]|null $rfObjects  RainforestStockEstimation object (or Array indexed by getKey()).
      *                                                                          If set then they will be updated from the response,
      *                                                                          instead of creating new ones.
      * @return RainforestStockEstimation[]
      * @throws \Exception
      */
-    public function retrieveStockEstimations($requests, $rfObjects=null) {
-        /** @var RainforestStockEstimation[] $objects */
-        $objects = $this->retrieveObjects(StockEstimationRequest::getReflectionArray(), $requests, $rfObjects);
-        return $objects;
+    public function retrieveStockEstimations(array|StockEstimationRequest $requests, array|RainforestStockEstimation $rfObjects=null): array
+    {
+        return $this->retrieveObjects(StockEstimationRequest::getReflectionArray(), $requests, $rfObjects);
     }
     /**
      * @param array $reflectionArray
      * @param CommonRequest|CommonRequest[] $requests   The CommonRequest(s) to process and retrieve.
-     * @param $rfObjects                                Rainforest objects (or Array indexed by getKey()). If set then they
+     * @param mixed $rfObjects                                Rainforest objects (or Array indexed by getKey()). If set then they
      *                                                  will be updated from the response, instead of creating new ones.
      * @return RainforestEntityCommon[]
      * @throws \Exception
      */
-    private function retrieveObjects($reflectionArray, $requests, $rfObjects=null) {
+    private function retrieveObjects(array $reflectionArray, array|CommonRequest $requests, mixed $rfObjects=null): array
+    {
         $debugName = 'retrieve' . $reflectionArray['debug'] . 's';
 
         $convertedSingleParamIntoArray = false;
@@ -295,7 +296,8 @@ class RainforestClient
      * @return CommonResponse[]
      * @throws \Exception
      */
-    private function fetchResponsesFromApi($requests, $responseClass) {
+    private function fetchResponsesFromApi(array $requests, string $responseClass): array
+    {
         $client = new Client();
         $promiseRequests = [];
         $rfResponses = [];
@@ -308,7 +310,6 @@ class RainforestClient
             $promiseRequests[$request->getKey()] = $client->getAsync(sprintf('https://api.rainforestapi.com/request?%s', $queryString));
         }
 
-        /** @var CommonResponse[] $responses */
         $responses = Promise\settle($promiseRequests)->wait();
         foreach ($responses as $key => $response) {
             try {
@@ -327,7 +328,8 @@ class RainforestClient
      * @return CommonResponse[]
      * @throws \Exception
      */
-    private function fetchResponsesFromTestFile($requests, $responseClass) {
+    private function fetchResponsesFromTestFile(array $requests, string $responseClass): array
+    {
         $rfResponses = [];
         $responses = [];
         $debugName = substr($responseClass, strrpos($responseClass, '\\')+1);
@@ -356,7 +358,8 @@ class RainforestClient
      * @return array
      * @throws \Exception
      */
-    private function validateResponseAndReturnData($response, $responseClass) {
+    private function validateResponseAndReturnData(ResponseInterface $response, string $responseClass): array
+    {
         if (is_array($response) && array_key_exists('state', $response)) {
             if (Promise\PromiseInterface::FULFILLED === $response['state']) {
                 $response = $response['value'];
@@ -396,13 +399,13 @@ class RainforestClient
     /**
      * Logs with a given level.
      *
-     * @param mixed  $level
      * @param string $message
-     * @param array  $context
+     * @param mixed  $level
+     * @param array $context
      *
      * @return void
      */
-    protected function logMessage($message, $level, $context = [])
+    protected function logMessage(string $message, mixed $level, array $context = [])
     {
         if ($this->logger) {
             // Use the internal logger for logging.
@@ -421,7 +424,8 @@ class RainforestClient
         fclose($fileHandle);
         $this->logMessage('Saved response to file ' . $this->getDebugFileName(), LoggerService::DEBUG);
     }
-    protected function debugLoadResponseFromFile() {
+    protected function debugLoadResponseFromFile(): string
+    {
         $responseText = file_get_contents($this->getDebugFileName());
         $this->logMessage('Loaded response from file ' . $this->getDebugFileName(), LoggerService::DEBUG);
         return $responseText;
