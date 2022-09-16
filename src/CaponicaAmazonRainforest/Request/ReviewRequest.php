@@ -3,9 +3,10 @@
 namespace CaponicaAmazonRainforest\Request;
 
 use CaponicaAmazonRainforest\Client\RainforestClient;
-use CaponicaAmazonRainforest\Entity\RainforestReview;
 use CaponicaAmazonRainforest\Entity\RainforestReviewList;
 use CaponicaAmazonRainforest\Response\ReviewResponse;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Wrapper for the parameters used when making a Review request.
@@ -20,9 +21,9 @@ class ReviewRequest extends CommonRequest
 {
     const CLASS_NAME = 'CaponicaAmazonRainforest\\Request\\ReviewRequest';
 
-    protected $amazon_domain = null;
-    protected $asin = null;
-    protected $url = null;
+    protected ?string $amazon_domain = null;
+    protected ?string $asin = null;
+    protected ?string $url = null;
 
     protected $gtin = null;
     protected $skip_gtin_cache = null;
@@ -70,7 +71,7 @@ class ReviewRequest extends CommonRequest
     const ENUM_SORT_MOST_HELPFUL            = 'most_helpful';
     const ENUM_SORT_MOST_RECENT             = 'most_recent';
 
-    public function __construct($site_or_url, $asin=null, $options=[])
+    #[Pure] public function __construct($site_or_url, $asin=null, $options=[])
     {
         if (empty($asin) && empty($options['gtin'])) {
             $this->url = $site_or_url;
@@ -90,7 +91,8 @@ class ReviewRequest extends CommonRequest
         }
     }
 
-    public function getOptionKeys() {
+    public function getOptionKeys(): array
+    {
         return [
             'gtin',
             'skip_gtin_cache',
@@ -108,10 +110,11 @@ class ReviewRequest extends CommonRequest
         ];
     }
 
-    public function getFilterKeys() {
+    #[Pure] public function getFilterKeys(): array {
         return self::getStaticFilterKeys();
     }
-    public static function getStaticFilterKeys() {
+    public static function getStaticFilterKeys(): array
+    {
         return [
             self::OPTION_FILTER_REVIEWER_TYPE,
             self::OPTION_FILTER_REVIEW_STARS,
@@ -121,7 +124,7 @@ class ReviewRequest extends CommonRequest
         ];
     }
 
-    public function getQueryKeys() {
+    #[Pure] public function getQueryKeys(): array {
         $queryKeys = $this->getOptionKeys();
         $queryKeys[] = 'amazon_domain';
         $queryKeys[] = 'asin';
@@ -129,11 +132,14 @@ class ReviewRequest extends CommonRequest
         return $queryKeys;
     }
 
-    public function getQueryType() {
+    public function getQueryType(): string
+    {
         return RainforestClient::REQUEST_TYPE_REVIEWS;
     }
 
-    public static function getReflectionArray() {
+    #[ArrayShape(['requestClass' => "string", 'responseClass' => "string", 'entityClass' => "string", 'debug' => "string"])]
+    public static function getReflectionArray(): array
+    {
         return [
             'requestClass'  => self::CLASS_NAME,
             'responseClass' => ReviewResponse::CLASS_NAME,
@@ -142,10 +148,12 @@ class ReviewRequest extends CommonRequest
         ];
     }
 
-    public function getFiltersString() {
+    #[Pure] public function getFiltersString(): ?string
+    {
         return self::convertFilterToString($this->getFiltersArray());
     }
-    public function getFiltersArray() {
+    #[Pure] public function getFiltersArray(): array
+    {
         $filters = [];
         foreach ($this->getFilterKeys() as $key) {
             if (is_null($this->$key)) {
@@ -158,7 +166,8 @@ class ReviewRequest extends CommonRequest
         }
         return $filters;
     }
-    private static function getConversionArrayFilterValueToChar() {
+    private static function getConversionArrayFilterValueToChar(): array
+    {
         return [
             self::ENUM_REVIEWER_TYPE_VERIFIED       => 'V',
             self::ENUM_REVIEWER_TYPE_ALL            => 'A',
@@ -178,7 +187,8 @@ class ReviewRequest extends CommonRequest
             self::ENUM_SORT_MOST_RECENT             => 'R',
         ];
     }
-    public static function convertFilterToString($filterArray) {
+    #[Pure] public static function convertFilterToString($filterArray): ?string
+    {
         if (empty($filterArray)) {
             return null;
         }
@@ -207,7 +217,8 @@ class ReviewRequest extends CommonRequest
      *
      * @return string
      */
-    public function getKeyLong() {
+    public function getKeyLong(): string
+    {
         $key = null;
         if ($this->amazon_domain) {
             if ($this->asin) {
