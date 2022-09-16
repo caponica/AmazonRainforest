@@ -49,11 +49,11 @@ class RainforestReview
     protected ?bool $vineProgram;
     protected ?bool $vineProgramFree;
     protected ?array $attributes;
-    protected ?\DateTime $reviewDate;
+    protected ?\DateTimeInterface $reviewDate;
     protected ?string $profileName;
     protected ?string $profileLink;
     protected ?string $mfgReplyBody;
-    protected ?\DateTime $mfgReplyDate;
+    protected ?\DateTimeInterface $mfgReplyDate;
     protected ?string $mfgReplyProfileName;
     protected ?string $mfgReplyProfileLink;
 
@@ -93,7 +93,7 @@ class RainforestReview
     protected function setRatingFromDecimal($decimal) {
         $this->setRating50(10 * $decimal);
     }
-    protected function convertDateArrayIntoDateObject($dateArray): ?\DateTime
+    protected function convertDateArrayIntoDateObject($dateArray): ?\DateTimeInterface
     {
         if (empty($dateArray) || empty($dateArray['utc'])) {
             return null;
@@ -131,102 +131,102 @@ class RainforestReview
         return $this->data;
     }
 
-    public function setIdString($value): static
+    public function setIdString(?string $value): static
     {
         $this->idString = $value;
         return $this;
     }
-    public function setTitle($value): static
+    public function setTitle(?string $value): static
     {
         $this->title = $value;
         return $this;
     }
-    public function setBody($value): static
+    public function setBody(?string $value): static
     {
         $this->body = $value;
         return $this;
     }
-    public function setLink($value): static
+    public function setLink(?string $value): static
     {
         $this->link = $value;
         return $this;
     }
-    public function setRating50($value): static
+    public function setRating50(?int $value): static
     {
         $this->rating50 = $value;
         return $this;
     }
-    public function setHelpfulVotes($value): static
+    public function setHelpfulVotes(?int $value): static
     {
         $this->helpfulVotes = $value;
         return $this;
     }
-    public function setComments($value): static
+    public function setComments(?int $value): static
     {
         $this->comments = $value;
         return $this;
     }
-    public function setReviewCountry($value): static
+    public function setReviewCountry(?string $value): static
     {
         $this->reviewCountry = $value;
         return $this;
     }
-    public function setIsGlobalReview($value): static
+    public function setIsGlobalReview(?bool $value): static
     {
         $this->isGlobalReview = $value;
         return $this;
     }
-    public function setVerifiedPurchase($value): static
+    public function setVerifiedPurchase(?bool $value): static
     {
         $this->verifiedPurchase = $value;
         return $this;
     }
-    public function setVineProgram($value): static
+    public function setVineProgram(?bool $value): static
     {
         $this->vineProgram = $value;
         return $this;
     }
-    public function setVineProgramFree($value): static
+    public function setVineProgramFree(?bool $value): static
     {
         $this->vineProgramFree = $value;
         return $this;
     }
-    public function setAttributes($value): static
+    public function setAttributes(?array $value): static
     {
         $this->attributes = $value;
         return $this;
     }
-    public function setReviewDate($value): static
+    public function setReviewDate(?\DateTimeInterface $value): static
     {
         $this->reviewDate = $value;
         return $this;
     }
-    public function setProfileName($value): static
+    public function setProfileName(?string $value): static
     {
         $this->profileName = $value;
         return $this;
     }
-    public function setProfileLink($value): static
+    public function setProfileLink(?string $value): static
     {
         $this->profileLink = $value;
         return $this;
     }
-    public function setMfgReplyBody($value): static
+    public function setMfgReplyBody(?string $value): static
     {
         $this->mfgReplyBody = $value;
         return $this;
     }
-    public function setMfgReplyDate($value): static
+    public function setMfgReplyDate(?\DateTimeInterface $value): static
     {
         $this->mfgReplyDate = $value;
         return $this;
     }
-    public function setMfgReplyProfileName($value): static
+    public function setMfgReplyProfileName(?string $value): static
     {
         $this->mfgReplyProfileName = $value;
         return $this;
     }
-    public function setMfgReplyProfileLink($value): static
+    public function setMfgReplyProfileLink(?string $value): static
     {
         $this->mfgReplyProfileLink = $value;
         return $this;
@@ -366,9 +366,9 @@ class RainforestReview
     /**
      * Get reviewDate
      *
-     * @return \DateTime|null
+     * @return \DateTimeInterface|null
      */
-    public function getReviewDate(): ?\DateTime
+    public function getReviewDate(): ?\DateTimeInterface
     {
         return $this->reviewDate;
     }
@@ -406,9 +406,9 @@ class RainforestReview
     /**
      * Get mfgReplyDate
      *
-     * @return \DateTime|null
+     * @return \DateTimeInterface|null
      */
-    public function getMfgReplyDate(): ?\DateTime
+    public function getMfgReplyDate(): ?\DateTimeInterface
     {
         return $this->mfgReplyDate;
     }
