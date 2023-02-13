@@ -153,11 +153,31 @@ class RainforestClient
         $suffix = $this->convertAmazonSiteToSuffix($amazonSite);
         return strtoupper(substr($suffix, -2));
     }
+    public function convertAmazonCountryCodeToSite(string $countryCode): string
+    {
+        if ('US' === $countryCode) {
+            return self::AMAZON_SITE_USA;
+        }
+
+        foreach ($this->getValidAmazonSiteSuffixArray() as $site => $suffix) {
+            if (strtoupper(substr($suffix, -2)) === $countryCode) {
+                return $site;
+            }
+        }
+
+        throw new \InvalidArgumentException('Unknown Amazon Country Code: ' . $countryCode);
+    }
 
     public function convertAmazonSuffixToCountryCode(string $amazonSuffix): string
     {
         $amazonSite = $this->convertAmazonSuffixToSite($amazonSuffix);
         return $this->convertAmazonSiteToCountryCode($amazonSite);
+    }
+
+    public function convertAmazonCountryCodeToSuffix(string $countryCode): string
+    {
+        $amazonSite = $this->convertAmazonCountryCodeToSite($countryCode);
+        return $this->convertAmazonSiteToSuffix($amazonSite);
     }
 
     public function convertAmazonSiteToSuffix($amazonSite): string
