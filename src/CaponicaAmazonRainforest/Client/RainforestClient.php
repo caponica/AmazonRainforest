@@ -30,6 +30,7 @@ use Psr\Log\LoggerInterface;
 class RainforestClient
 {
     const AMAZON_SITE_AUSTRALIA     = 'amazon.com.au';
+    const AMAZON_SITE_BELGIUM       = 'amazon.com.be';
     const AMAZON_SITE_BRAZIL        = 'amazon.com.br';
     const AMAZON_SITE_CANADA        = 'amazon.ca';
     const AMAZON_SITE_FRANCE        = 'amazon.fr';
@@ -39,7 +40,12 @@ class RainforestClient
     const AMAZON_SITE_JAPAN         = 'amazon.co.jp';
     const AMAZON_SITE_MEXICO        = 'amazon.com.mx';
     const AMAZON_SITE_NETHERLANDS   = 'amazon.nl';
+    const AMAZON_SITE_POLAND        = 'amazon.pl';
+    const AMAZON_SITE_SAUDI_ARABIA  = 'amazon.sa';
+    const AMAZON_SITE_SINGAPORE     = 'amazon.sg';
     const AMAZON_SITE_SPAIN         = 'amazon.es';
+    const AMAZON_SITE_SWEDEN        = 'amazon.se';
+    const AMAZON_SITE_TURKEY        = 'amazon.com.tr';
     const AMAZON_SITE_UAE           = 'amazon.ae';
     const AMAZON_SITE_UK            = 'amazon.co.uk';
     const AMAZON_SITE_USA           = 'amazon.com';
@@ -87,6 +93,7 @@ class RainforestClient
     {
         return [
             self::AMAZON_SITE_AUSTRALIA,
+            self::AMAZON_SITE_BELGIUM,
             self::AMAZON_SITE_BRAZIL,
             self::AMAZON_SITE_CANADA,
             self::AMAZON_SITE_FRANCE,
@@ -96,7 +103,12 @@ class RainforestClient
             self::AMAZON_SITE_JAPAN,
             self::AMAZON_SITE_MEXICO,
             self::AMAZON_SITE_NETHERLANDS,
+            self::AMAZON_SITE_POLAND,
+            self::AMAZON_SITE_SAUDI_ARABIA,
+            self::AMAZON_SITE_SINGAPORE,
             self::AMAZON_SITE_SPAIN,
+            self::AMAZON_SITE_SWEDEN,
+            self::AMAZON_SITE_TURKEY,
             self::AMAZON_SITE_UAE,
             self::AMAZON_SITE_UK,
             self::AMAZON_SITE_USA,
@@ -110,6 +122,7 @@ class RainforestClient
     {
         return [
             self::AMAZON_SITE_AUSTRALIA     => 'com.au',
+            self::AMAZON_SITE_BELGIUM       => 'com.be',
             self::AMAZON_SITE_BRAZIL        => 'com.br',
             self::AMAZON_SITE_CANADA        => 'ca',
             self::AMAZON_SITE_FRANCE        => 'fr',
@@ -119,12 +132,28 @@ class RainforestClient
             self::AMAZON_SITE_JAPAN         => 'co.jp',
             self::AMAZON_SITE_MEXICO        => 'com.mx',
             self::AMAZON_SITE_NETHERLANDS   => 'nl',
+            self::AMAZON_SITE_POLAND        => 'pl',
+            self::AMAZON_SITE_SAUDI_ARABIA  => 'sa',
+            self::AMAZON_SITE_SINGAPORE     => 'sg',
             self::AMAZON_SITE_SPAIN         => 'es',
+            self::AMAZON_SITE_SWEDEN        => 'se',
+            self::AMAZON_SITE_TURKEY        => 'com.tr',
             self::AMAZON_SITE_UAE           => 'ae',
             self::AMAZON_SITE_UK            => 'co.uk',
             self::AMAZON_SITE_USA           => 'com',
         ];
     }
+
+    public function convertAmazonSiteToCountryCode(string $amazonSite): string
+    {
+        if (self::AMAZON_SITE_USA === $amazonSite) {
+            return 'US';
+        }
+
+        $suffix = $this->convertAmazonSiteToSuffix($amazonSite);
+        return strtoupper(substr($suffix, -2));
+    }
+
     public function convertAmazonSiteToSuffix($amazonSite): string
     {
         $suffixes = $this->getValidAmazonSiteSuffixArray();
