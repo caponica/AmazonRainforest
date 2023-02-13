@@ -154,6 +154,12 @@ class RainforestClient
         return strtoupper(substr($suffix, -2));
     }
 
+    public function convertAmazonSuffixToCountryCode(string $amazonSuffix): string
+    {
+        $amazonSite = $this->convertAmazonSuffixToSite($amazonSuffix);
+        return $this->convertAmazonSiteToCountryCode($amazonSite);
+    }
+
     public function convertAmazonSiteToSuffix($amazonSite): string
     {
         $suffixes = $this->getValidAmazonSiteSuffixArray();
@@ -161,6 +167,15 @@ class RainforestClient
             throw new \InvalidArgumentException('Unknown Amazon Site: ' . $amazonSite);
         }
         return $suffixes[$amazonSite];
+    }
+    public function convertAmazonSuffixToSite(string $amazonSuffix): string
+    {
+        $suffixes = $this->getValidAmazonSiteSuffixArray();
+        $amazonSite = array_search($amazonSuffix, $suffixes);
+        if (false === $amazonSite) {
+            throw new \InvalidArgumentException('Unknown Amazon Suffix: ' . $amazonSuffix);
+        }
+        return $amazonSite;
     }
 
     /**
