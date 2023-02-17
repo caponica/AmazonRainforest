@@ -69,19 +69,19 @@ class RainforestReviewList extends RainforestEntityCommon
     /**
      * @var array
      */
-    protected array $filters;
+    protected array|null $filters;
     /**
      * @var string
      */
-    protected string $searchTerm;
+    protected string|null $searchTerm;
     /**
      * @var int
      */
-    protected int $page;
+    protected int|null $page;
     /**
      * @var int
      */
-    protected int $totalPages;
+    protected int|null $totalPages;
     /**
      * @var RainforestReview[]
      */
