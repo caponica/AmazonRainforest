@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Christian
- * Date: 26/05/2020
- * Time: 19:46
- */
 
 namespace CaponicaAmazonRainforest\Entity;
 
@@ -65,41 +59,41 @@ class RainforestReviewList extends RainforestEntityCommon
     /**
      * @var string
      */
-    protected $asin;
+    protected string $asin;
     /**
      * Domain suffix, e.g. "co.uk", "com" or "de"
      *
      * @var string
      */
-    protected $marketplace;
+    protected string $marketplace;
     /**
      * @var array
      */
-    protected $filters;
+    protected array $filters;
     /**
      * @var string
      */
-    protected $searchTerm;
+    protected string $searchTerm;
     /**
      * @var int
      */
-    protected $page;
+    protected int $page;
     /**
      * @var int
      */
-    protected $totalPages;
+    protected int $totalPages;
     /**
      * @var RainforestReview[]
      */
-    protected $reviews = [];
+    protected array $reviews = [];
     /**
      * @var RainforestReview
      */
-    protected $topCriticalReview;
+    protected RainforestReview $topCriticalReview;
     /**
      * @var RainforestReview
      */
-    protected $topPositiveReview;
+    protected RainforestReview $topPositiveReview;
 
 
     /**
