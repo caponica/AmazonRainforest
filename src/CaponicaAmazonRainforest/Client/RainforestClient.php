@@ -89,6 +89,14 @@ class RainforestClient
         }
     }
 
+    public function getDebugSettings(): array {
+        return [
+            'debug_file_path'   => $this->debugFilePath,
+            'debug_input'       => $this->debugInput,
+            'debug_output'      => $this->debugOutput,
+        ];
+    }
+
     public function getValidAmazonSitesArray(): array
     {
         return [
