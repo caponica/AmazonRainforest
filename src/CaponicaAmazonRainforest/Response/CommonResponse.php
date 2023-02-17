@@ -55,6 +55,32 @@ class CommonResponse
         return $this->reqParams[$key];
     }
 
+    public function getCreditsRemaining() {
+        return $this->getReqInfo('credits_remaining');
+    }
+    public function getCreditsUsedThisPeriod() {
+        return $this->getReqInfo('credits_used');
+    }
+    public function getCreditsUsedThisRequest() {
+        return $this->getReqInfo('credits_used_this_request');
+    }
+    public function getCreditsResetAt() {
+        return $this->getReqInfo('credits_reset_at');
+    }
+    public function getSuccess() {
+        return $this->getReqInfo('success');
+    }
+
+    public function getCreatedAt() {
+        return new \DateTimeImmutable($this->getReqMeta('created_at'));
+    }
+    public function getProcessedAt() {
+        return new \DateTimeImmutable($this->getReqMeta('processed_at'));
+    }
+    public function getTimeTaken() {
+        return $this->getReqMeta('total_time_taken');
+    }
+
     /**
      * If all else fails and there's no other way to access a field you need then you can access the whole data tree, you
      * should normally be able to use one of the methods in the XyzResponse class to access the data you need, e.g. getProductField(x)
