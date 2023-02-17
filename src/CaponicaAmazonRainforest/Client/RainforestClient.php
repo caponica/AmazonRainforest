@@ -430,7 +430,7 @@ class RainforestClient
      * @return array
      * @throws \Exception
      */
-    private function validateResponseAndReturnData(ResponseInterface $response, string $responseClass): array
+    private function validateResponseAndReturnData(ResponseInterface|array $response, string $responseClass): array
     {
         if (is_array($response) && array_key_exists('state', $response)) {
             if (Promise\PromiseInterface::FULFILLED === $response['state']) {
