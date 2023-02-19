@@ -39,6 +39,7 @@ class RainforestReview
     protected ?string $body;
 //    protected $images;
 //    protected $videos;
+    protected ?string $asin;
     protected ?string $link;
     protected ?int $rating50;
     protected ?int $helpfulVotes;
@@ -66,6 +67,7 @@ class RainforestReview
             'id'                        => 'setIdString',
             'title'                     => 'setTitle',
             'body'                      => 'setBody',
+            'asin'                      => 'setAsin',
             'link'                      => 'setLink',
             'rating'                    => 'setRatingFromDecimal',
             'helpful_votes'             => 'setHelpfulVotes',
@@ -144,6 +146,11 @@ class RainforestReview
     public function setBody(?string $value): static
     {
         $this->body = $value;
+        return $this;
+    }
+    public function setAsin(?string $value): static
+    {
+        $this->asin = $value;
         return $this;
     }
     public function setLink(?string $value): static
@@ -261,6 +268,16 @@ class RainforestReview
     public function getBody(): ?string
     {
         return $this->body;
+    }
+
+    /**
+     * Get ASIN
+     *
+     * @return string|null
+     */
+    public function getAsin(): ?string
+    {
+        return $this->asin;
     }
 
     /**
