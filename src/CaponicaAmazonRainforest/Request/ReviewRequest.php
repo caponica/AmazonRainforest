@@ -31,7 +31,7 @@ class ReviewRequest extends CommonRequest
     protected null|bool|string $show_different_asins = null;
     protected ?string $search_term = null;
     protected ?string $review_id = null;
-    protected ?int $max_page = 1;
+    protected ?int $max_page = null;
     protected ?int $page = 1;
 
     protected ?string $reviewer_type = null; // see ENUM_REVIEWER_TYPE_XYZ
@@ -85,7 +85,7 @@ class ReviewRequest extends CommonRequest
         }
 
         foreach ($this->getOptionKeys() as $key) {
-            if (isset($options[$key])) {
+            if (array_key_exists($key, $options)) {
                 $this->$key = $options[$key];
             }
         }
