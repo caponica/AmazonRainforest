@@ -77,11 +77,11 @@ class RainforestReviewList extends RainforestEntityCommon
     /**
      * @var int
      */
-    protected int|null $page;
+    protected int|null $page = 0;
     /**
      * @var int
      */
-    protected int|null $totalPages;
+    protected int|null $totalPages = 0;
     /**
      * @var RainforestReview[]
      */
