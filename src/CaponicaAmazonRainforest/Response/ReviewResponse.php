@@ -33,8 +33,12 @@ class ReviewResponse extends CommonResponse
         parent::__construct($rfData);
 
         // main review data:
-        $this->reviews              = &$this->data[self::MAIN_KEY_REVIEWS];
-        $this->product              = &$this->data[self::MAIN_KEY_PRODUCT];
+        if (isset($this->data[self::MAIN_KEY_REVIEWS])) {
+            $this->reviews = &$this->data[self::MAIN_KEY_REVIEWS];
+        }
+        if (isset($this->data[self::MAIN_KEY_PRODUCT])) {
+            $this->product = &$this->data[self::MAIN_KEY_PRODUCT];
+        }
 
         // occasional data:
         if (isset($this->data[self::MAIN_KEY_PAGINATION])) {
@@ -51,14 +55,10 @@ class ReviewResponse extends CommonResponse
         }
     }
 
-    public static function getMainKeys() {
-        $keys = parent::getMainKeys();
-        $keys[] = self::MAIN_KEY_REVIEWS;
-        $keys[] = self::MAIN_KEY_PRODUCT;
-        return $keys;
-    }
     public static function getOccasionalKeys() {
         return [
+            self::MAIN_KEY_REVIEWS,
+            self::MAIN_KEY_PRODUCT,
             self::MAIN_KEY_PAGINATION,
             self::MAIN_KEY_SUMMARY,
             self::MAIN_KEY_TOP_CRITICAL,
