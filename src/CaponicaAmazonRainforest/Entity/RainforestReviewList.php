@@ -16,6 +16,7 @@ use CaponicaAmazonRainforest\Response\ReviewResponse;
 class RainforestReviewList extends RainforestEntityCommon
 {
     const CLASS_NAME = 'CaponicaAmazonRainforest\\Entity\\RainforestReviewList';
+    const EXPECTED_NUMBER_OF_REVIEWS_PER_PAGE = 10;
 
     /**
      * @param CommonResponse $rfResponse    A ReviewResponse (only declared as 'CommonResponse' for inheritance purposes)
@@ -44,6 +45,14 @@ class RainforestReviewList extends RainforestEntityCommon
                 $this->setTopPositiveReviewFromArray($rfResponse->getTopPositiveReview());
             }
         }
+    }
+
+    public function isFullPage() {
+        return count($this->reviews) == static::getExpectedReviewsPerPage();
+    }
+
+    public function getExpectedReviewsPerPage() {
+        return static::EXPECTED_NUMBER_OF_REVIEWS_PER_PAGE;
     }
 
     public function addReviewFromArray($dataArray) {
