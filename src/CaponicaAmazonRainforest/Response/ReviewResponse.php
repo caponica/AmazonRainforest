@@ -139,7 +139,11 @@ class ReviewResponse extends CommonResponse
     }
 
     public function getAsin() {
-        return $this->getProductField('asin');
+        $asin = $this->getProductField('asin');
+        if (empty($asin)) {
+            $asin = $this->getReqParam('asin');
+        }
+        return $asin;
     }
     public function getProductTitle() {
         return $this->getProductField('title');
