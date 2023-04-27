@@ -74,10 +74,6 @@ class RainforestReviewList extends RainforestEntityCommon
         return false;
     }
 
-    public function getReviewCount() {
-        return count($this->reviews);
-    }
-
     public function isFullPage() {
         return $this->getReviewCount() == static::getExpectedReviewsPerPage();
     }
