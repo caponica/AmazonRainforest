@@ -65,7 +65,7 @@ class RainforestReviewList extends RainforestEntityCommon
          *     "end": 10           // broken - should be request_parameters.page*10 (or less if partial)
          * }
          */
-        if (0 < count($this->reviews)) return false;
+        if (0 < $this->getReviewCount()) return false;
 
         /** @var ReviewResponse $response */
         $response = $this->getRainforestResponse();
@@ -74,8 +74,12 @@ class RainforestReviewList extends RainforestEntityCommon
         return false;
     }
 
+    public function getReviewCount() {
+        return count($this->reviews);
+    }
+
     public function isFullPage() {
-        return count($this->reviews) == static::getExpectedReviewsPerPage();
+        return $this->getReviewCount() == static::getExpectedReviewsPerPage();
     }
 
     public function getExpectedReviewsPerPage() {
