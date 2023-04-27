@@ -47,6 +47,33 @@ class RainforestReviewList extends RainforestEntityCommon
         }
     }
 
+    public function isBrokenPage()
+    {
+        /*
+         * Broken pages have:
+         * "request_parameters": {
+         *     "page": "44", // something greater than 1
+         * },
+         * "reviews": []
+         * "pagination": {
+         *     "reviews_total_filtered": 5113, // more than 10
+         *     "reviews_total": 5113,
+         *     "total_results": 5113,
+         *     "total_pages": 512, // more than 1
+         *     "current_page": 1,  // broken - should match request_parameters.page
+         *     "start": 1,         // broken - should be (request_parameters.page-1)*10+1
+         *     "end": 10           // broken - should be request_parameters.page*10 (or less if partial)
+         * }
+         */
+        if (0 < count($this->reviews)) return false;
+
+        /** @var ReviewResponse $response */
+        $response = $this->getRainforestResponse();
+        if ($response->getCurrentPage() > 1) return false;
+        if ($response->getReqParam('page') > 1) return true;
+        return false;
+    }
+
     public function isFullPage() {
         return count($this->reviews) == static::getExpectedReviewsPerPage();
     }
