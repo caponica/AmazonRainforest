@@ -29,8 +29,13 @@ class RainforestProduct extends RainforestEntityCommon
         /** @var ProductResponse $rfResponse */
         $this->setRainforestResponse($rfResponse);
         $this->setAsin($rfResponse->getAsin());
+        $this->setParentAsin($rfResponse->getParentAsin());
         $this->setMarketplace($rfResponse->getMarketplaceSuffix());
         $this->setTitle($rfResponse->getTitle());
+        $this->setDescription($rfResponse->getDescription());
+        $this->setBullets($rfResponse->getBullets());
+        $this->setSalesRankFlat($rfResponse->getSalesRankFlat());
+        $this->setKeywords($rfResponse->getKeywords());
         $this->setFirstAvailable($rfResponse->getFirstAvailableDate());
         $this->setMainImageLink($rfResponse->getMainImageLink());
         $this->setImageCount($rfResponse->getImageCount());
@@ -45,12 +50,9 @@ class RainforestProduct extends RainforestEntityCommon
         $this->setIsAPlusThirdParty($rfResponse->getIsAPlusThirdParty());
         $this->setAPlusCompany($rfResponse->getAPlusCompany());
         $this->setModelNumber($rfResponse->getModelNumber());
-        $this->setRecommendedAge($rfResponse->getRecommendedAge());
-        $this->setLanguage($rfResponse->getLanguage());
         $this->setBbIsPrime($rfResponse->getBbIsPrime());
         $this->setBbIsConditionNew($rfResponse->getBbIsConditionNew());
         $this->setBbAvailabilityType($rfResponse->getBbAvailabilityType());
-        $this->setBbAvailabilityStock($rfResponse->getBbAvailabilityStock());
         $this->setBbDispatchDays($rfResponse->getBbDispatchDays());
         $this->setBbAvailabilityRaw($rfResponse->getBbAvailabilityRaw());
         $this->setBbFulType($rfResponse->getBbFulType());
@@ -81,970 +83,467 @@ class RainforestProduct extends RainforestEntityCommon
         }
     }
 
+    protected string $marketplace;
 
-    /**
-     * @var string
-     */
-    protected $asin;
+    protected string $asin;
+    protected string $parentAsin;
 
-    /**
-     * Domain suffix, e.g. "co.uk", "com" or "de"
-     *
-     * @var string
-     */
-    protected $marketplace;
+    protected ?int $salesRank = null;
+    protected ?string $salesRankTlc = null;
+    protected ?string $salesRankFlat = null;
 
-    /**
-     * @var string
-     */
-    protected $title;
+    protected ?\DateTime $firstAvailable = null;
+    protected ?string $mainImageLink = null;
+    protected int $imageCount = 0;
+    protected int $videoCount = 0;
 
-    /**
-     * @var \DateTime
-     */
-    protected $firstAvailable;
+    protected ?int $rating50 = null;
+    protected ?int $ratingsTotal = null;
+    protected ?int $reviewsTotal = null;
 
-    /**
-     * @var string
-     */
-    protected $mainImageLink;
+    protected bool $hasAPlusContent = false;
+    protected bool $isAPlusThirdParty = false;
+    protected ?string $aPlusCompany = null;
 
-    /**
-     * @var integer
-     */
-    protected $imageCount = 0;
+    protected bool $hasCoupon = false;
+    protected bool $bbIsPrime = false;
+    protected bool $bbIsConditionNew = true;
+    protected ?string $bbAvailabilityType = null;
+    protected ?int $bbDispatchDays = null;
+    protected ?string $bbAvailabilityRaw = null;
+    protected ?string $bbFulType = null;
+    protected ?string $bbFulSellerName = null;
+    protected string $bbPriceCurrency;
+    protected ?string $bbPriceAmount = null;
 
-    /**
-     * @var integer
-     */
-    protected $videoCount = 0;
+    protected ?string $modelNumber = null;
+    protected array $bullets = [];
+    protected string $title = '';
+    protected string $keywords = '';
+    protected ?string $description = null;
 
-    /**
-     * @var integer
-     */
-    protected $salesRank;
+    protected int|float|null $weightPounds = null;
+    protected int|float|null $weightShippingPounds = null;
+    protected ?string $dimensionsInches = null;
+    protected int|float|null $volumeCuFt = null;
 
-    /**
-     * @var string
-     */
-    protected $salesRankTlc;
-
-    /**
-     * @var boolean
-     */
-    protected $hasCoupon = false;
-
-    /**
-     * Integer rating out of 50 (e.g. 4.8 stars => 48)
-     *
-     * @var integer
-     */
-    protected $rating50;
-
-    /**
-     * @var integer
-     */
-    protected $ratingsTotal;
-
-    /**
-     * @var integer
-     */
-    protected $reviewsTotal;
-
-    /**
-     * @var boolean
-     */
-    protected $hasAPlusContent = false;
-
-    /**
-     * @var boolean
-     */
-    protected $isAPlusThirdParty = false;
-
-    /**
-     * @var string
-     */
-    protected $aPlusCompany;
-
-    /**
-     * @var string
-     */
-    protected $weightPounds;
-
-    /**
-     * @var string
-     */
-    protected $weightShippingPounds;
-
-    /**
-     * String representation of dimensions, largest dimension first. E.g. 7x5.2x3.1
-     *
-     * @var string
-     */
-    protected $dimensionsInches;
-
-    /**
-     * Decimal volume in cubic feet, calculated from dimensions
-     *
-     * @var string
-     */
-    protected $volumeCuFt;
-
-    /**
-     * @var string
-     */
-    protected $modelNumber;
-
-    /**
-     * @var string
-     */
-    protected $recommendedAge;
-
-    /**
-     * @var string
-     */
-    protected $language;
-
-    /**
-     * @var boolean
-     */
-    protected $bbIsPrime = false;
-
-    /**
-     * @var boolean
-     */
-    protected $bbIsConditionNew = true;
-
-    /**
-     * @var string
-     */
-    protected $bbAvailabilityType;
-
-    /**
-     * @var integer
-     */
-    protected $bbAvailabilityStock;
-
-    /**
-     * @var integer
-     */
-    protected $bbDispatchDays;
-
-    /**
-     * @var string
-     */
-    protected $bbAvailabilityRaw;
-
-    /**
-     * @var string
-     */
-    protected $bbFulType;
-
-    /**
-     * @var string
-     */
-    protected $bbFulSellerName;
-
-    /**
-     * @var string
-     */
-    protected $bbPriceCurrency;
-
-    /**
-     * @var string
-     */
-    protected $bbPriceAmount;
-
-
-    /**
-     * Set asin
-     *
-     * @param string $asin
-     *
-     * @return RainforestProduct
-     */
-    public function setAsin($asin)
+    public function getMarketplace(): ?string
     {
-        $this->asin = $asin;
-
-        return $this;
+        return $this->marketplace;
     }
 
-    /**
-     * Get asin
-     *
-     * @return string
-     */
-    public function getAsin()
-    {
-        return $this->asin;
-    }
-
-    /**
-     * Set marketplace
-     *
-     * @param string $marketplace
-     *
-     * @return RainforestProduct
-     */
-    public function setMarketplace($marketplace)
+    public function setMarketplace(string $marketplace): static
     {
         $this->marketplace = $marketplace;
 
         return $this;
     }
 
-    /**
-     * Get marketplace
-     *
-     * @return string
-     */
-    public function getMarketplace()
+    public function getAsin(): ?string
     {
-        return $this->marketplace;
+        return $this->asin;
     }
 
-    /**
-     * Set title
-     *
-     * @param string $title
-     *
-     * @return RainforestProduct
-     */
-    public function setTitle($title)
+    public function setAsin(string $asin): static
     {
-        $this->title = $title;
+        $this->asin = $asin;
 
         return $this;
     }
 
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function getParentAsin(): ?string
     {
-        return $this->title;
+        return $this->parentAsin;
     }
 
-    /**
-     * Set firstAvailable
-     *
-     * @param \DateTime $firstAvailable
-     *
-     * @return RainforestProduct
-     */
-    public function setFirstAvailable($firstAvailable)
+    public function setParentAsin(string $parentAsin): static
     {
-        $this->firstAvailable = $firstAvailable;
+        $this->parentAsin = $parentAsin;
 
         return $this;
     }
 
-    /**
-     * Get firstAvailable
-     *
-     * @return \DateTime
-     */
-    public function getFirstAvailable()
+    public function getSalesRank(): ?int
     {
-        return $this->firstAvailable;
+        return $this->salesRank;
     }
 
-    /**
-     * Set mainImageLink
-     *
-     * @param string $mainImageLink
-     *
-     * @return RainforestProduct
-     */
-    public function setMainImageLink($mainImageLink)
-    {
-        $this->mainImageLink = $mainImageLink;
-
-        return $this;
-    }
-
-    /**
-     * Get mainImageLink
-     *
-     * @return string
-     */
-    public function getMainImageLink()
-    {
-        return $this->mainImageLink;
-    }
-
-    /**
-     * Set imageCount
-     *
-     * @param integer $imageCount
-     *
-     * @return RainforestProduct
-     */
-    public function setImageCount($imageCount)
-    {
-        $this->imageCount = $imageCount;
-
-        return $this;
-    }
-
-    /**
-     * Get imageCount
-     *
-     * @return integer
-     */
-    public function getImageCount()
-    {
-        return $this->imageCount;
-    }
-
-    /**
-     * Set videoCount
-     *
-     * @param integer $videoCount
-     *
-     * @return RainforestProduct
-     */
-    public function setVideoCount($videoCount)
-    {
-        $this->videoCount = $videoCount;
-
-        return $this;
-    }
-
-    /**
-     * Get videoCount
-     *
-     * @return integer
-     */
-    public function getVideoCount()
-    {
-        return $this->videoCount;
-    }
-
-    /**
-     * Set salesRank
-     *
-     * @param integer $salesRank
-     *
-     * @return RainforestProduct
-     */
-    public function setSalesRank($salesRank)
+    public function setSalesRank(?int $salesRank): static
     {
         $this->salesRank = $salesRank;
 
         return $this;
     }
 
-    /**
-     * Get salesRank
-     *
-     * @return integer
-     */
-    public function getSalesRank()
+    public function getSalesRankTlc(): ?string
     {
-        return $this->salesRank;
+        return $this->salesRankTlc;
     }
 
-    /**
-     * Set salesRankTlc
-     *
-     * @param string $salesRankTlc
-     *
-     * @return RainforestProduct
-     */
-    public function setSalesRankTlc($salesRankTlc)
+    public function setSalesRankTlc(?string $salesRankTlc): static
     {
         $this->salesRankTlc = $salesRankTlc;
 
         return $this;
     }
 
-    /**
-     * Get salesRankTlc
-     *
-     * @return string
-     */
-    public function getSalesRankTlc()
+    public function getSalesRankFlat(): ?string
     {
-        return $this->salesRankTlc;
+        return $this->salesRankFlat;
     }
 
-    /**
-     * Set hasCoupon
-     *
-     * @param boolean $hasCoupon
-     *
-     * @return RainforestProduct
-     */
-    public function setHasCoupon($hasCoupon)
+    public function setSalesRankFlat(?string $salesRankFlat): static
     {
-        $this->hasCoupon = $hasCoupon;
+        $this->salesRankFlat = $salesRankFlat;
 
         return $this;
     }
 
-    /**
-     * Get hasCoupon
-     *
-     * @return boolean
-     */
-    public function getHasCoupon()
+    public function getFirstAvailable(): ?\DateTimeInterface
     {
-        return $this->hasCoupon;
+        return $this->firstAvailable;
     }
 
-    /**
-     * Set rating50
-     *
-     * @param integer $rating50
-     *
-     * @return RainforestProduct
-     */
-    public function setRating50($rating50)
+    public function setFirstAvailable(?\DateTimeInterface $firstAvailable): static
+    {
+        $this->firstAvailable = $firstAvailable;
+
+        return $this;
+    }
+
+    public function getMainImageLink(): ?string
+    {
+        return $this->mainImageLink;
+    }
+
+    public function setMainImageLink(?string $mainImageLink): static
+    {
+        $this->mainImageLink = $mainImageLink;
+
+        return $this;
+    }
+
+    public function getImageCount(): ?int
+    {
+        return $this->imageCount;
+    }
+
+    public function setImageCount(int $imageCount): static
+    {
+        $this->imageCount = $imageCount;
+
+        return $this;
+    }
+
+    public function getVideoCount(): ?int
+    {
+        return $this->videoCount;
+    }
+
+    public function setVideoCount(int $videoCount): static
+    {
+        $this->videoCount = $videoCount;
+
+        return $this;
+    }
+
+    public function getRating50(): ?int
+    {
+        return $this->rating50;
+    }
+
+    public function setRating50(?int $rating50): static
     {
         $this->rating50 = $rating50;
 
         return $this;
     }
 
-    /**
-     * Get rating50
-     *
-     * @return integer
-     */
-    public function getRating50()
+    public function getRatingsTotal(): ?int
     {
-        return $this->rating50;
+        return $this->ratingsTotal;
     }
 
-    /**
-     * Set ratingsTotal
-     *
-     * @param integer $ratingsTotal
-     *
-     * @return RainforestProduct
-     */
-    public function setRatingsTotal($ratingsTotal)
+    public function setRatingsTotal(?int $ratingsTotal): static
     {
         $this->ratingsTotal = $ratingsTotal;
 
         return $this;
     }
 
-    /**
-     * Get ratingsTotal
-     *
-     * @return integer
-     */
-    public function getRatingsTotal()
+    public function getReviewsTotal(): ?int
     {
-        return $this->ratingsTotal;
+        return $this->reviewsTotal;
     }
 
-    /**
-     * Set reviewsTotal
-     *
-     * @param integer $reviewsTotal
-     *
-     * @return RainforestProduct
-     */
-    public function setReviewsTotal($reviewsTotal)
+    public function setReviewsTotal(?int $reviewsTotal): static
     {
         $this->reviewsTotal = $reviewsTotal;
 
         return $this;
     }
 
-    /**
-     * Get reviewsTotal
-     *
-     * @return integer
-     */
-    public function getReviewsTotal()
+    public function getHasAPlusContent(): ?bool
     {
-        return $this->reviewsTotal;
+        return $this->hasAPlusContent;
     }
 
-    /**
-     * Set hasAPlusContent
-     *
-     * @param boolean $hasAPlusContent
-     *
-     * @return RainforestProduct
-     */
-    public function setHasAPlusContent($hasAPlusContent)
+    public function setHasAPlusContent(bool $hasAPlusContent): static
     {
         $this->hasAPlusContent = $hasAPlusContent;
 
         return $this;
     }
 
-    /**
-     * Get hasAPlusContent
-     *
-     * @return boolean
-     */
-    public function getHasAPlusContent()
+    public function getIsAPlusThirdParty(): ?bool
     {
-        return $this->hasAPlusContent;
+        return $this->isAPlusThirdParty;
     }
 
-    /**
-     * Set isAPlusThirdParty
-     *
-     * @param boolean $isAPlusThirdParty
-     *
-     * @return RainforestProduct
-     */
-    public function setIsAPlusThirdParty($isAPlusThirdParty)
+    public function setIsAPlusThirdParty(bool $isAPlusThirdParty): static
     {
         $this->isAPlusThirdParty = $isAPlusThirdParty;
 
         return $this;
     }
 
-    /**
-     * Get isAPlusThirdParty
-     *
-     * @return boolean
-     */
-    public function getIsAPlusThirdParty()
+    public function getAPlusCompany(): ?string
     {
-        return $this->isAPlusThirdParty;
+        return $this->aPlusCompany;
     }
 
-    /**
-     * Set aPlusCompany
-     *
-     * @param string $aPlusCompany
-     *
-     * @return RainforestProduct
-     */
-    public function setAPlusCompany($aPlusCompany)
+    public function setAPlusCompany(?string $aPlusCompany): static
     {
         $this->aPlusCompany = $aPlusCompany;
 
         return $this;
     }
 
-    /**
-     * Get aPlusCompany
-     *
-     * @return string
-     */
-    public function getAPlusCompany()
+    public function getWeightPounds(): int|float|null
     {
-        return $this->aPlusCompany;
+        return $this->weightPounds;
     }
 
-    /**
-     * Set weightPounds
-     *
-     * @param string $weightPounds
-     *
-     * @return RainforestProduct
-     */
-    public function setWeightPounds($weightPounds)
+    public function setWeightPounds(int|float|null $weightPounds): static
     {
         $this->weightPounds = $weightPounds;
 
         return $this;
     }
 
-    /**
-     * Get weightPounds
-     *
-     * @return string
-     */
-    public function getWeightPounds()
+    public function getWeightShippingPounds(): int|float|null
     {
-        return $this->weightPounds;
+        return $this->weightShippingPounds;
     }
 
-    /**
-     * Set weightShippingPounds
-     *
-     * @param string $weightShippingPounds
-     *
-     * @return RainforestProduct
-     */
-    public function setWeightShippingPounds($weightShippingPounds)
+    public function setWeightShippingPounds(int|float|null $weightShippingPounds): static
     {
         $this->weightShippingPounds = $weightShippingPounds;
 
         return $this;
     }
 
-    /**
-     * Get weightShippingPounds
-     *
-     * @return string
-     */
-    public function getWeightShippingPounds()
+    public function getDimensionsInches(): ?string
     {
-        return $this->weightShippingPounds;
+        return $this->dimensionsInches;
     }
 
-    /**
-     * Set dimensionsInches
-     *
-     * @param string $dimensionsInches
-     *
-     * @return RainforestProduct
-     */
-    public function setDimensionsInches($dimensionsInches)
+    public function setDimensionsInches(?string $dimensionsInches): static
     {
         $this->dimensionsInches = $dimensionsInches;
 
         return $this;
     }
 
-    /**
-     * Get dimensionsInches
-     *
-     * @return string
-     */
-    public function getDimensionsInches()
+    public function getVolumeCuFt(): int|float|null
     {
-        return $this->dimensionsInches;
+        return $this->volumeCuFt;
     }
 
-    /**
-     * Set volumeCuFt
-     *
-     * @param string $volumeCuFt
-     *
-     * @return RainforestProduct
-     */
-    public function setVolumeCuFt($volumeCuFt)
+    public function setVolumeCuFt(int|float|null $volumeCuFt): static
     {
         $this->volumeCuFt = $volumeCuFt;
 
         return $this;
     }
 
-    /**
-     * Get volumeCuFt
-     *
-     * @return string
-     */
-    public function getVolumeCuFt()
+    public function getHasCoupon(): ?bool
     {
-        return $this->volumeCuFt;
+        return $this->hasCoupon;
     }
 
-    /**
-     * Set modelNumber
-     *
-     * @param string $modelNumber
-     *
-     * @return RainforestProduct
-     */
-    public function setModelNumber($modelNumber)
+    public function setHasCoupon(bool $hasCoupon): static
     {
-        $this->modelNumber = $modelNumber;
+        $this->hasCoupon = $hasCoupon;
 
         return $this;
     }
 
-    /**
-     * Get modelNumber
-     *
-     * @return string
-     */
-    public function getModelNumber()
+    public function getBbIsPrime(): ?bool
     {
-        return $this->modelNumber;
+        return $this->bbIsPrime;
     }
 
-    /**
-     * Set recommendedAge
-     *
-     * @param string $recommendedAge
-     *
-     * @return RainforestProduct
-     */
-    public function setRecommendedAge($recommendedAge)
-    {
-        $this->recommendedAge = $recommendedAge;
-
-        return $this;
-    }
-
-    /**
-     * Get recommendedAge
-     *
-     * @return string
-     */
-    public function getRecommendedAge()
-    {
-        return $this->recommendedAge;
-    }
-
-    /**
-     * Set language
-     *
-     * @param string $language
-     *
-     * @return RainforestProduct
-     */
-    public function setLanguage($language)
-    {
-        $this->language = $language;
-
-        return $this;
-    }
-
-    /**
-     * Get language
-     *
-     * @return string
-     */
-    public function getLanguage()
-    {
-        return $this->language;
-    }
-
-    /**
-     * Set bbIsPrime
-     *
-     * @param boolean $bbIsPrime
-     *
-     * @return RainforestProduct
-     */
-    public function setBbIsPrime($bbIsPrime)
+    public function setBbIsPrime(bool $bbIsPrime): static
     {
         $this->bbIsPrime = $bbIsPrime;
 
         return $this;
     }
 
-    /**
-     * Get bbIsPrime
-     *
-     * @return boolean
-     */
-    public function getBbIsPrime()
+    public function getBbIsConditionNew(): ?bool
     {
-        return $this->bbIsPrime;
+        return $this->bbIsConditionNew;
     }
 
-    /**
-     * Set bbIsConditionNew
-     *
-     * @param boolean $bbIsConditionNew
-     *
-     * @return RainforestProduct
-     */
-    public function setBbIsConditionNew($bbIsConditionNew)
+    public function setBbIsConditionNew(bool $bbIsConditionNew): static
     {
         $this->bbIsConditionNew = $bbIsConditionNew;
 
         return $this;
     }
 
-    /**
-     * Get bbIsConditionNew
-     *
-     * @return boolean
-     */
-    public function getBbIsConditionNew()
+    public function getBbAvailabilityType(): ?string
     {
-        return $this->bbIsConditionNew;
+        return $this->bbAvailabilityType;
     }
 
-    /**
-     * Set bbAvailabilityType
-     *
-     * @param string $bbAvailabilityType
-     *
-     * @return RainforestProduct
-     */
-    public function setBbAvailabilityType($bbAvailabilityType)
+    public function setBbAvailabilityType(?string $bbAvailabilityType): static
     {
         $this->bbAvailabilityType = $bbAvailabilityType;
 
         return $this;
     }
 
-    /**
-     * Get bbAvailabilityType
-     *
-     * @return string
-     */
-    public function getBbAvailabilityType()
+    public function getBbDispatchDays(): ?int
     {
-        return $this->bbAvailabilityType;
+        return $this->bbDispatchDays;
     }
 
-    /**
-     * Set bbAvailabilityStock
-     *
-     * @param integer $bbAvailabilityStock
-     *
-     * @return RainforestProduct
-     */
-    public function setBbAvailabilityStock($bbAvailabilityStock)
-    {
-        $this->bbAvailabilityStock = $bbAvailabilityStock;
-
-        return $this;
-    }
-
-    /**
-     * Get bbAvailabilityStock
-     *
-     * @return integer
-     */
-    public function getBbAvailabilityStock()
-    {
-        return $this->bbAvailabilityStock;
-    }
-
-    /**
-     * Set bbDispatchDays
-     *
-     * @param integer $bbDispatchDays
-     *
-     * @return RainforestProduct
-     */
-    public function setBbDispatchDays($bbDispatchDays)
+    public function setBbDispatchDays(?int $bbDispatchDays): static
     {
         $this->bbDispatchDays = $bbDispatchDays;
 
         return $this;
     }
 
-    /**
-     * Get bbDispatchDays
-     *
-     * @return integer
-     */
-    public function getBbDispatchDays()
+    public function getBbAvailabilityRaw(): ?string
     {
-        return $this->bbDispatchDays;
+        return $this->bbAvailabilityRaw;
     }
 
-    /**
-     * Set bbAvailabilityRaw
-     *
-     * @param string $bbAvailabilityRaw
-     *
-     * @return RainforestProduct
-     */
-    public function setBbAvailabilityRaw($bbAvailabilityRaw)
+    public function setBbAvailabilityRaw(?string $bbAvailabilityRaw): static
     {
         $this->bbAvailabilityRaw = $bbAvailabilityRaw;
 
         return $this;
     }
 
-    /**
-     * Get bbAvailabilityRaw
-     *
-     * @return string
-     */
-    public function getBbAvailabilityRaw()
+    public function getBbFulType(): ?string
     {
-        return $this->bbAvailabilityRaw;
+        return $this->bbFulType;
     }
 
-    /**
-     * Set bbFulType
-     *
-     * @param string $bbFulType
-     *
-     * @return RainforestProduct
-     */
-    public function setBbFulType($bbFulType)
+    public function setBbFulType(?string $bbFulType): static
     {
         $this->bbFulType = $bbFulType;
 
         return $this;
     }
 
-    /**
-     * Get bbFulType
-     *
-     * @return string
-     */
-    public function getBbFulType()
+    public function getBbFulSellerName(): ?string
     {
-        return $this->bbFulType;
+        return $this->bbFulSellerName;
     }
 
-    /**
-     * Set bbFulSellerName
-     *
-     * @param string $bbFulSellerName
-     *
-     * @return RainforestProduct
-     */
-    public function setBbFulSellerName($bbFulSellerName)
+    public function setBbFulSellerName(?string $bbFulSellerName): static
     {
         $this->bbFulSellerName = $bbFulSellerName;
 
         return $this;
     }
 
-    /**
-     * Get bbFulSellerName
-     *
-     * @return string
-     */
-    public function getBbFulSellerName()
+    public function getBbPriceCurrency(): ?string
     {
-        return $this->bbFulSellerName;
+        return $this->bbPriceCurrency;
     }
 
-    /**
-     * Set bbPriceCurrency
-     *
-     * @param string $bbPriceCurrency
-     *
-     * @return RainforestProduct
-     */
-    public function setBbPriceCurrency($bbPriceCurrency)
+    public function setBbPriceCurrency(?string $bbPriceCurrency): static
     {
         $this->bbPriceCurrency = $bbPriceCurrency;
 
         return $this;
     }
 
-    /**
-     * Get bbPriceCurrency
-     *
-     * @return string
-     */
-    public function getBbPriceCurrency()
+    public function getBbPriceAmount(): int|float|null
     {
-        return $this->bbPriceCurrency;
+        return $this->bbPriceAmount;
     }
 
-    /**
-     * Set bbPriceAmount
-     *
-     * @param string $bbPriceAmount
-     *
-     * @return RainforestProduct
-     */
-    public function setBbPriceAmount($bbPriceAmount)
+    public function setBbPriceAmount(int|float|string|null $bbPriceAmount): static
     {
-        $this->bbPriceAmount = $bbPriceAmount;
+        $this->bbPriceAmount = $bbPriceAmount * 1;
 
         return $this;
     }
 
-    /**
-     * Get bbPriceAmount
-     *
-     * @return string
-     */
-    public function getBbPriceAmount()
+    public function getModelNumber(): ?string
     {
-        return $this->bbPriceAmount;
+        return $this->modelNumber;
+    }
+
+    public function setModelNumber(?string $modelNumber): static
+    {
+        $this->modelNumber = $modelNumber;
+
+        return $this;
+    }
+
+    public function getBullets(): array
+    {
+        return $this->bullets;
+    }
+
+    public function setBullets(array $bullets): static
+    {
+        $this->bullets = $bullets;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getKeywords(): ?string
+    {
+        return $this->keywords;
+    }
+
+    public function setKeywords(string $keywords): static
+    {
+        $this->keywords = $keywords;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
     }
 }

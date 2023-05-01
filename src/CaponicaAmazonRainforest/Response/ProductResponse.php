@@ -122,7 +122,8 @@ class ProductResponse extends CommonResponse
         return $this->viewToPurchase;
     }
 
-    public function getFirstAvailableDate() {
+    public function getFirstAvailableDate(): ?\DateTime
+    {
         $firstArray = $this->getProductField('first_available');
         if (empty($firstArray) || empty($firstArray['utc'])) {
             return null;
@@ -139,7 +140,8 @@ class ProductResponse extends CommonResponse
      * @return float|int|null
      * @throws \Exception
      */
-    private function convertWeightStringToPounds($weightString) {
+    private function convertWeightStringToPounds($weightString): float|int|null
+    {
         if (empty($weightString)) {
             return null;
         }
@@ -161,15 +163,39 @@ class ProductResponse extends CommonResponse
      * @return float|int|null
      * @throws \Exception
      */
-    public function getWeightPounds() {
-        return $this->convertWeightStringToPounds($this->getProductField('weight'));
+    public function getWeightPounds(): float|int|null
+    {
+        $weight = $this->getProductField('weight');
+        if (empty($weight)) {
+            $weight = $this->extractWeightStringFromDimensions();
+        }
+        if (empty($weight)) {
+            return null;
+        }
+        $weight = $this->convertWeightStringToPounds($weight);
+        return $weight;
     }
     /**
      * @return float|int|null
      * @throws \Exception
      */
-    public function getWeightShippingPounds() {
+    public function getWeightShippingPounds(): float|int|null
+    {
         return $this->convertWeightStringToPounds($this->getProductField('shipping_weight'));
+    }
+
+    protected function extractWeightStringFromDimensions(): ?string
+    {
+        $dimensionsString = trim(strtolower($this->getProductField('dimensions')));
+        if (empty($dimensionsString)) {
+            return null;
+        }
+        $matches = [];
+        // 1.18 x 4.02 x 5 inches; 2.4 Ounces
+        if (preg_match('/; ([0-9.]+ [a-z]+)$/i', $dimensionsString, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 
     /**
@@ -182,7 +208,7 @@ class ProductResponse extends CommonResponse
             return null;
         }
         $matches = [];
-        if (preg_match('/([0-9.]+)[ x]+([0-9.]+)[ x]+([0-9.]+) ([a-z]+)/', $dimensionsString, $matches)) {
+        if (preg_match('/^([0-9.]+)[ x]+([0-9.]+)[ x]+([0-9.]+) ([a-z]+)/i', $dimensionsString, $matches)) {
             $dims = [
                 1*$matches[1],
                 1*$matches[2],
@@ -219,10 +245,10 @@ class ProductResponse extends CommonResponse
         return implode('x', $dims);
     }
     /**
-     * @return string|null
+     * @return float|null
      * @throws \Exception
      */
-    public function getVolumeCuFt() {
+    public function getVolumeCuFt(): float|null {
         $dims = $this->getDimensionsInchesArray();
         if (empty($dims)) {
             return null;
@@ -236,7 +262,7 @@ class ProductResponse extends CommonResponse
         return $volume / 1728; // convert cubic inches to cuft
     }
 
-    public function getRating50() {
+    public function getRating50(): ?int {
         return 10 * $this->getProductField('rating');
     }
 
@@ -246,6 +272,12 @@ class ProductResponse extends CommonResponse
             return null;
         }
         return $mainImage['link'];
+    }
+    public function getBestsellersRankFlat() { // alias for getSalesRankFlat
+        return $this->getSalesRankFlat();
+    }
+    public function getSalesRankFlat() {
+        return $this->getProductField('bestsellers_rank_flat');
     }
     public function getSalesRank() {
         $rankArray = $this->getProductField('bestsellers_rank');
@@ -417,8 +449,20 @@ class ProductResponse extends CommonResponse
     public function getAsin() {
         return $this->getProductField('asin');
     }
+    public function getParentAsin() {
+        return $this->getProductField('parent_asin');
+    }
     public function getTitle() {
         return $this->getProductField('title');
+    }
+    public function getBullets() {
+        return $this->getProductField('feature_bullets');
+    }
+    public function getDescription() {
+        return $this->getProductField('description');
+    }
+    public function getKeywords() {
+        return $this->getProductField('keywords');
     }
     public function getModelNumber() {
         return $this->getProductField('model_number');
