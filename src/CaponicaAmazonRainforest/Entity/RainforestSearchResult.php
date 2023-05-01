@@ -2,6 +2,9 @@
 
 namespace CaponicaAmazonRainforest\Entity;
 
+use CaponicaAmazonRainforest\Response\CommonResponse;
+use CaponicaAmazonRainforest\Response\ReviewResponse;
+
 /**
  * A child object which lives under RainforestSearch or RainforestBestSellers. Represents a single "hit" in the Search results.
  * Note that some fields are only available from Search, some only from BestSellers
@@ -22,52 +25,80 @@ class RainforestSearchResult
         }
     }
 
-    protected $position;
-    protected $title;
-    protected $asin;
-    protected $link;
-    protected $image;
-    protected $rating50;
-    protected $ratingsTotal;
-    protected $priceCurrency;
-    protected $priceAmount;
+    /**
+     * The original data array used to build this object - in case you need something not cleanly converted
+     *
+     * @var array $data
+     */
+    protected array $data;
+
+    protected int $position;
+    protected string $title;
+    protected string $asin;
+    protected string $link;
+    protected string $image;
+    protected ?int $rating50 = null;
+    protected ?int $ratingsTotal = null;
+    protected ?string $priceCurrency = null;
+    protected mixed $priceAmount = null;
+
+    protected bool $isAmazonBrand = false;
+    protected bool $isAmazonExclusive = false;
+    protected bool $isAmazonFresh = false;
+    protected bool $isSmallBusiness = false;
+    protected ?string $couponBadgeText = null;
+    protected ?string $couponExtraText = null;
+    protected ?string $amazonChoiceKeywords = null;
+    protected ?string $bestSellerLink = null;
+    protected ?string $bestSellerCategory = null;
+    protected ?string $unitPrice = null;
 
     // Fields only available under RainforestSearch
-    protected $isPrime;
-    protected $sponsored;
-    protected $addOnItem;
-    protected $categories;
-    protected $availability;
-    protected $reviewsTotal;
+    protected bool $isPrime = false;
+    protected bool $sponsored = false;
+    protected bool $addOnItem = false;
+    protected mixed $categories = null;
+    protected ?string $availability = null;
+    protected ?int $reviewsTotal = null;
 
     // Fields only available under RainforestBestSellers
-    protected $rank;
-    protected $subTitleText;
-    protected $subTitleLink;
-    protected $variant;
-    protected $priceLowerAmount;
-    protected $priceUpperAmount;
+    protected ?int $rank = null;
+    protected ?string $subTitleText = null;
+    protected ?string $subTitleLink = null;
+    protected ?string $variant = null;
+    protected mixed $priceLowerAmount = null;
+    protected mixed $priceUpperAmount = null;
 
     /**
      * @param array $data       Raw array of data from the API
      */
     public function updateFromSearchResultArray($data) {
+        $this->setData($data);
         $fields = [
-            'position'      => 'setPosition',
-            'title'         => 'setTitle',
-            'asin'          => 'setAsin',
-            'link'          => 'setLink',
-            'image'         => 'setImage',
-            'ratings_total' => 'setRatingsTotal',
-            'rating'        => 'setRating50FromRating5',
+            'position'              => 'setPosition',
+            'title'                 => 'setTitle',
+            'asin'                  => 'setAsin',
+            'link'                  => 'setLink',
+            'image'                 => 'setImage',
+            'ratings_total'         => 'setRatingsTotal',
+            'rating'                => 'setRating50FromRating5',
 
-            'is_prime'      => 'setIsPrime',
-            'sponsored'     => 'setSponsored',
-            'categories'    => 'setCategories',
-            'reviews_total' => 'setReviewsTotal',
+            'is_amazon_brand'       => 'setIsAmazonBrand',
+            'is_exclusive_to_amazon'=> 'setIsAmazonExclusive',
+            'is_amazon_fresh'       => 'setIsAmazonFresh',
+            'is_small_business'     => 'setIsSmallBusiness',
+            'unit_price'            => 'setUnitPrice',
+            'bestseller'            => 'setBestSellerDetails',
+            'coupon'                => 'setCouponDetails',
+            'amazons_choice'        => 'setAmazonChoiceKeywordsFromArray',
 
-            'rank'          => 'setRank',
-            'variant'       => 'setVariant',
+            'is_prime'              => 'setIsPrime',
+            'sponsored'             => 'setSponsored',
+            'categories'            => 'setCategories',
+            'reviews_total'         => 'setReviewsTotal',
+
+            'rank'                  => 'setRank',
+            'variant'               => 'setVariant',
         ];
         foreach ($fields as $dataKey => $setter) {
             if (isset($data[$dataKey])) {
@@ -93,364 +124,462 @@ class RainforestSearchResult
             $this->subTitleLink = null;
         }
 
-        if (!empty($data['prices'][0]['currency'])) {
-            $this->priceCurrency = $data['prices'][0]['currency'];
-        }
-        if (!empty($data['prices'][0]['value'])) {
-            $this->priceAmount = $data['prices'][0]['value'];
+        if (!empty($data['price']['value'])) {
+            $this->setPriceDetailsFromArray($data['price']);
+        } elseif (!empty($data['prices'][0]['value'])) {
+            $this->setPriceDetailsFromArray($data['prices'][0]);
         }
 
-        if (!empty($data['price']['currency'])) {
-            $this->priceCurrency = $data['price']['currency'];
-        }
-        if (!empty($data['price']['value'])) {
-            $this->priceAmount = $data['price']['value'];
-        }
         if (!empty($data['price_lower']['value'])) {
-            $this->priceLowerAmount = $data['price_lower']['value'];
-            if (empty($this->priceCurrency) && !empty($data['price_lower']['currency'])) {
-                $this->priceCurrency = $data['price_lower']['currency'];
-            }
+            $this->setPriceLowerDetailsFromArray($data['price_lower']);
         }
         if (!empty($data['price_upper']['value'])) {
-            $this->priceUpperAmount = $data['price_upper']['value'];
-            if (empty($this->priceCurrency) && !empty($data['price_upper']['currency'])) {
-                $this->priceCurrency = $data['price_upper']['currency'];
-            }
+            $this->setPriceUpperDetailsFromArray($data['price_upper']);
         }
     }
 
-    /**
-     * Get position
-     *
-     * @return integer
-     */
-    public function getPosition()
+    protected function setData($value): static
+    {
+        $this->data = $value;
+        return $this;
+    }
+    public function getOriginalDataArray(): array
+    {
+        return $this->data;
+    }
+
+    public function setRating50FromRating5($rating5): void
+    {
+        $this->rating50 = 10 * $rating5;
+    }
+
+    public function setBestSellerDetails(array $dataArray): void
+    {
+        $this->bestSellerLink = $dataArray['link'] ?? null;
+        $this->bestSellerCategory = $dataArray['category'] ?? null;
+    }
+
+    public function setCouponDetails($couponArray): void
+    {
+        $this->couponBadgeText = $couponArray['badge_text'] ?? null;
+        $this->couponExtraText = $couponArray['text'] ?? null;
+    }
+
+    public function setAmazonChoiceKeywordsFromArray($choiceArray): void
+    {
+        $this->amazonChoiceKeywords = $choiceArray['keywords'] ?? null;
+    }
+
+    public function setPriceDetailsFromArray($priceArray): void
+    {
+        if (!empty($priceArray['currency'])) {
+            $this->setPriceCurrency($priceArray['currency']);
+        }
+        if (!empty($priceArray['value'])) {
+            $this->setPriceAmountFromDecimal($priceArray['value']);
+        }
+    }
+    public function setPriceLowerDetailsFromArray($priceArray): void
+    {
+        if (!empty($priceArray['currency']) && empty($this->getPriceCurrency())) {
+            $this->setPriceCurrency($priceArray['currency']);
+        }
+        if (!empty($priceArray['value'])) {
+            $this->setPriceLowerAmountFromDecimal($priceArray['value']);
+        }
+    }
+    public function setPriceUpperDetailsFromArray($priceArray): void
+    {
+        if (!empty($priceArray['currency']) && empty($this->getPriceCurrency())) {
+            $this->setPriceCurrency($priceArray['currency']);
+        }
+        if (!empty($priceArray['value'])) {
+            $this->setPriceUpperAmountFromDecimal($priceArray['value']);
+        }
+    }
+
+    public function setPriceAmountFromDecimal(string|float $rawValue): static
+    {
+        return $this->setPriceAmount($rawValue);
+    }
+    public function setPriceLowerAmountFromDecimal(string|float $rawValue): static
+    {
+        return $this->setPriceLowerAmount($rawValue);
+    }
+    public function setPriceUpperAmountFromDecimal(string|float $rawValue): static
+    {
+        return $this->setPriceUpperAmount($rawValue);
+    }
+
+    public function getPosition(): ?int
     {
         return $this->position;
     }
 
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function setPosition(int $position): static
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * Get asin
-     *
-     * @return string
-     */
-    public function getAsin()
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getAsin(): ?string
     {
         return $this->asin;
     }
 
-    /**
-     * Get link
-     *
-     * @return string
-     */
-    public function getLink()
+    public function setAsin(string $asin): static
+    {
+        $this->asin = $asin;
+
+        return $this;
+    }
+
+    public function getLink(): ?string
     {
         return $this->link;
     }
 
-    /**
-     * Get rank
-     *
-     * @return integer
-     */
-    public function getRank()
+    public function setLink(string $link): static
     {
-        return $this->rank;
+        $this->link = $link;
+
+        return $this;
     }
 
-    /**
-     * Get variant
-     *
-     * @return string
-     */
-    public function getVariant()
-    {
-        return $this->variant;
-    }
-
-    /**
-     * Get subTitleText
-     *
-     * @return string
-     */
-    public function getSubTitleText()
-    {
-        return $this->subTitleText;
-    }
-
-    /**
-     * Get subTitleLink
-     *
-     * @return string
-     */
-    public function getSubTitleLink()
-    {
-        return $this->subTitleLink;
-    }
-
-    /**
-     * Get isPrime
-     *
-     * @return boolean
-     */
-    public function getIsPrime()
-    {
-        return $this->isPrime;
-    }
-
-    /**
-     * Get image
-     *
-     * @return string
-     */
-    public function getImage()
+    public function getImage(): ?string
     {
         return $this->image;
     }
 
-    /**
-     * Get sponsored
-     *
-     * @return boolean
-     */
-    public function getSponsored()
+    public function setImage(string $image): static
     {
-        return $this->sponsored;
-    }
-
-    /**
-     * Set addOnItem
-     *
-     * @param boolean $addOnItem
-     *
-     * @return RainforestSearchResult
-     */
-    public function setAddOnItem($addOnItem)
-    {
-        $this->addOnItem = $addOnItem;
+        $this->image = $image;
 
         return $this;
     }
 
-    /**
-     * Get addOnItem
-     *
-     * @return boolean
-     */
-    public function getAddOnItem()
+    public function getRating50(): ?int
     {
-        return $this->addOnItem;
+        return $this->rating50;
     }
 
-    /**
-     * Get categories
-     *
-     * @return string
-     */
-    public function getCategories()
-    {
-        return $this->categories;
-    }
-
-    /**
-     * Set availability
-     *
-     * @param string $availability
-     *
-     * @return RainforestSearchResult
-     */
-    public function setAvailability($availability)
-    {
-        $this->availability = $availability;
-
-        return $this;
-    }
-
-    /**
-     * Get availability
-     *
-     * @return string
-     */
-    public function getAvailability()
-    {
-        return $this->availability;
-    }
-
-    /**
-     * Set rating50
-     *
-     * @param integer $rating50
-     *
-     * @return RainforestSearchResult
-     */
-    public function setRating50($rating50)
+    public function setRating50(?int $rating50): static
     {
         $this->rating50 = $rating50;
 
         return $this;
     }
 
-    /**
-     * Get rating50
-     *
-     * @return integer
-     */
-    public function getRating50()
-    {
-        return $this->rating50;
-    }
-
-    /**
-     * Get ratingsTotal
-     *
-     * @return integer
-     */
-    public function getRatingsTotal()
+    public function getRatingsTotal(): ?int
     {
         return $this->ratingsTotal;
     }
 
-    /**
-     * Get reviewsTotal
-     *
-     * @return integer
-     */
-    public function getReviewsTotal()
+    public function setRatingsTotal(int $ratingsTotal): static
     {
-        return $this->reviewsTotal;
+        $this->ratingsTotal = $ratingsTotal;
+
+        return $this;
     }
 
-    /**
-     * Set priceCurrency
-     *
-     * @param string $priceCurrency
-     *
-     * @return RainforestSearchResult
-     */
-    public function setPriceCurrency($priceCurrency)
+    public function getPriceCurrency(): ?string
+    {
+        return $this->priceCurrency;
+    }
+
+    public function setPriceCurrency(?string $priceCurrency): static
     {
         $this->priceCurrency = $priceCurrency;
 
         return $this;
     }
 
-    /**
-     * Get priceCurrency
-     *
-     * @return string
-     */
-    public function getPriceCurrency()
+    public function getPriceAmount(): mixed
     {
-        return $this->priceCurrency;
+        return $this->priceAmount;
     }
 
-    /**
-     * Set priceAmount
-     *
-     * @param string $priceAmount
-     *
-     * @return RainforestSearchResult
-     */
-    public function setPriceAmount($priceAmount)
+    public function setPriceAmount(mixed $priceAmount): static
     {
         $this->priceAmount = $priceAmount;
 
         return $this;
     }
 
-    /**
-     * Get priceAmount
-     *
-     * @return string
-     */
-    public function getPriceAmount()
+    public function getIsAmazonBrand(): ?bool
     {
-        return $this->priceAmount;
+        return $this->isAmazonBrand;
     }
 
-    /**
-     * Get priceLowerAmount
-     *
-     * @return string
-     */
-    public function getPriceLowerAmount()
+    public function setIsAmazonBrand(bool $isAmazonBrand): static
+    {
+        $this->isAmazonBrand = $isAmazonBrand;
+
+        return $this;
+    }
+
+    public function getIsAmazonExclusive(): ?bool
+    {
+        return $this->isAmazonExclusive;
+    }
+
+    public function setIsAmazonExclusive(bool $isAmazonExclusive): static
+    {
+        $this->isAmazonExclusive = $isAmazonExclusive;
+
+        return $this;
+    }
+
+    public function getIsAmazonFresh(): ?bool
+    {
+        return $this->isAmazonFresh;
+    }
+
+    public function setIsAmazonFresh(bool $isAmazonFresh): static
+    {
+        $this->isAmazonFresh = $isAmazonFresh;
+
+        return $this;
+    }
+
+    public function getIsSmallBusiness(): ?bool
+    {
+        return $this->isSmallBusiness;
+    }
+
+    public function setIsSmallBusiness(bool $isSmallBusiness): static
+    {
+        $this->isSmallBusiness = $isSmallBusiness;
+
+        return $this;
+    }
+
+    public function getCouponBadgeText(): ?string
+    {
+        return $this->couponBadgeText;
+    }
+
+    public function setCouponBadgeText(?string $couponBadgeText): static
+    {
+        $this->couponBadgeText = $couponBadgeText;
+
+        return $this;
+    }
+
+    public function getCouponExtraText(): ?string
+    {
+        return $this->couponExtraText;
+    }
+
+    public function setCouponExtraText(?string $couponExtraText): static
+    {
+        $this->couponExtraText = $couponExtraText;
+
+        return $this;
+    }
+
+    public function getAmazonChoiceKeywords(): ?string
+    {
+        return $this->amazonChoiceKeywords;
+    }
+
+    public function setAmazonChoiceKeywords(?string $amazonChoiceKeywords): static
+    {
+        $this->amazonChoiceKeywords = $amazonChoiceKeywords;
+
+        return $this;
+    }
+
+    public function getBestSellerLink(): ?string
+    {
+        return $this->bestSellerLink;
+    }
+
+    public function setBestSellerLink(?string $bestSellerLink): static
+    {
+        $this->bestSellerLink = $bestSellerLink;
+
+        return $this;
+    }
+
+    public function getBestSellerCategory(): ?string
+    {
+        return $this->bestSellerCategory;
+    }
+
+    public function setBestSellerCategory(?string $bestSellerCategory): static
+    {
+        $this->bestSellerCategory = $bestSellerCategory;
+
+        return $this;
+    }
+
+    public function getUnitPrice(): ?string
+    {
+        return $this->unitPrice;
+    }
+
+    public function setUnitPrice(?string $unitPrice): static
+    {
+        $this->unitPrice = $unitPrice;
+
+        return $this;
+    }
+
+    public function getIsPrime(): ?bool
+    {
+        return $this->isPrime;
+    }
+
+    public function setIsPrime(bool $isPrime): static
+    {
+        $this->isPrime = $isPrime;
+
+        return $this;
+    }
+
+    public function getSponsored(): ?bool
+    {
+        return $this->sponsored;
+    }
+
+    public function setSponsored(bool $sponsored): static
+    {
+        $this->sponsored = $sponsored;
+
+        return $this;
+    }
+
+    public function getAddOnItem(): ?bool
+    {
+        return $this->addOnItem;
+    }
+
+    public function setAddOnItem(bool $addOnItem): static
+    {
+        $this->addOnItem = $addOnItem;
+
+        return $this;
+    }
+
+    public function getCategories(): ?string
+    {
+        return $this->categories;
+    }
+
+    public function setCategories(mixed $categories): static
+    {
+        $this->categories = $categories;
+
+        return $this;
+    }
+
+    public function getAvailability(): ?string
+    {
+        return $this->availability;
+    }
+
+    public function setAvailability(?string $availability): static
+    {
+        $this->availability = $availability;
+
+        return $this;
+    }
+
+    public function getReviewsTotal(): ?int
+    {
+        return $this->reviewsTotal;
+    }
+
+    public function setReviewsTotal(?int $reviewsTotal): static
+    {
+        $this->reviewsTotal = $reviewsTotal;
+
+        return $this;
+    }
+
+    public function getRank(): ?int
+    {
+        return $this->rank;
+    }
+
+    public function setRank(?int $rank): static
+    {
+        $this->rank = $rank;
+
+        return $this;
+    }
+
+    public function getSubTitleText(): ?string
+    {
+        return $this->subTitleText;
+    }
+
+    public function setSubTitleText(?string $subTitleText): static
+    {
+        $this->subTitleText = $subTitleText;
+
+        return $this;
+    }
+
+    public function getSubTitleLink(): ?string
+    {
+        return $this->subTitleLink;
+    }
+
+    public function setSubTitleLink(?string $subTitleLink): static
+    {
+        $this->subTitleLink = $subTitleLink;
+
+        return $this;
+    }
+
+    public function getVariant(): ?string
+    {
+        return $this->variant;
+    }
+
+    public function setVariant(?string $variant): static
+    {
+        $this->variant = $variant;
+
+        return $this;
+    }
+
+    public function getPriceLowerAmount(): mixed
     {
         return $this->priceLowerAmount;
     }
 
-    /**
-     * Get priceUpperAmount
-     *
-     * @return string
-     */
-    public function getPriceUpperAmount()
+    public function setPriceLowerAmount(mixed $priceLowerAmount): static
+    {
+        $this->priceLowerAmount = $priceLowerAmount;
+
+        return $this;
+    }
+
+    public function getPriceUpperAmount(): mixed
     {
         return $this->priceUpperAmount;
     }
 
-    public function setPosition($value) {
-        $this->position = $value;
-    }
-    public function setTitle($value) {
-        $this->title = $value;
-    }
-    public function setAsin($value) {
-        $this->asin = $value;
-    }
-    public function setLink($value) {
-        $this->link = $value;
-    }
-    public function setImage($value) {
-        $this->image = $value;
-    }
-    public function setSponsored($value) {
-        $this->sponsored = $value;
-    }
-    public function setCategories($value) {
-        $this->categories = $value;
-    }
-    public function setIsPrime($value) {
-        $this->isPrime = $value;
-    }
-    public function setRatingsTotal($value) {
-        $this->ratingsTotal = $value;
-    }
-    public function setReviewsTotal($value) {
-        $this->reviewsTotal = $value;
-    }
+    public function setPriceUpperAmount(mixed $priceUpperAmount): static
+    {
+        $this->priceUpperAmount = $priceUpperAmount;
 
-    public function setRating50FromRating5($rating5) {
-        $this->rating50 = 10 * $rating5;
-    }
-
-    public function setRank($value) {
-        $this->rank = $value;
-    }
-    public function setSubTitleText($value) {
-        $this->subTitleText = $value;
-    }
-    public function setSubTitleLink($value) {
-        $this->subTitleLink = $value;
-    }
-    public function setVariant($value) {
-        $this->variant = $value;
-    }
-    public function setPriceLowerAmount($value) {
-        $this->priceLowerAmount = $value;
-    }
-    public function setPriceUpperAmount($value) {
-        $this->priceUpperAmount = $value;
+        return $this;
     }
 }

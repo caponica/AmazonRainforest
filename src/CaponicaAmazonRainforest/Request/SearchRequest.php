@@ -71,7 +71,7 @@ class SearchRequest extends CommonRequest
         ];
     }
 
-    public function getQueryKeys() {
+    public function getQueryKeys(): array {
         $queryKeys = $this->getOptionKeys();
         $queryKeys[] = 'amazon_domain';
         $queryKeys[] = 'search_term';
@@ -79,7 +79,7 @@ class SearchRequest extends CommonRequest
         return $queryKeys;
     }
 
-    public function getQueryType() {
+    public function getQueryType(): string {
         return RainforestClient::REQUEST_TYPE_SEARCH;
     }
 
@@ -88,7 +88,7 @@ class SearchRequest extends CommonRequest
      *
      * @return string
      */
-    public function getKeyLong() {
+    public function getKeyLong(): string {
         if ($this->amazon_domain && $this->search_term) {
             $suffix = '~' . $this->search_term;
             $suffix .= '~' . $this->category_id;
