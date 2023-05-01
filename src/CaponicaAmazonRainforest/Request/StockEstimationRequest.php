@@ -33,7 +33,7 @@ class StockEstimationRequest extends CommonRequest
         ];
     }
 
-    public function getQueryKeys() {
+    public function getQueryKeys(): array {
         $queryKeys = [
             'amazon_domain',
             'asin'
@@ -41,7 +41,7 @@ class StockEstimationRequest extends CommonRequest
         return $queryKeys;
     }
 
-    public function getQueryType() {
+    public function getQueryType(): string {
         return RainforestClient::REQUEST_TYPE_STOCK_ESTIMATION;
     }
 
@@ -50,7 +50,7 @@ class StockEstimationRequest extends CommonRequest
      *
      * @return string
      */
-    public function getKeyLong() {
+    public function getKeyLong(): string {
         return $this->amazon_domain . '~' . $this->asin;
     }
 }

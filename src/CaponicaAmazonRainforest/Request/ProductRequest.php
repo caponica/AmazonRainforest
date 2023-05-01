@@ -66,7 +66,7 @@ class ProductRequest extends CommonRequest
         ];
     }
 
-    public function getQueryKeys() {
+    public function getQueryKeys(): array {
         $queryKeys = $this->getOptionKeys();
         $queryKeys[] = 'amazon_domain';
         $queryKeys[] = 'asin';
@@ -74,7 +74,7 @@ class ProductRequest extends CommonRequest
         return $queryKeys;
     }
 
-    public function getQueryType() {
+    public function getQueryType(): string {
         return RainforestClient::REQUEST_TYPE_PRODUCT;
     }
 
@@ -83,7 +83,7 @@ class ProductRequest extends CommonRequest
      *
      * @return string
      */
-    public function getKeyLong() {
+    public function getKeyLong(): string {
         if ($this->amazon_domain) {
             if ($this->asin) {
                 $suffix = $this->asin;

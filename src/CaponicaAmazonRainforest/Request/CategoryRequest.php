@@ -41,14 +41,14 @@ class CategoryRequest extends CommonRequest
         ];
     }
 
-    public function getQueryKeys() {
+    public function getQueryKeys(): array {
         $queryKeys[] = 'url';
         $queryKeys[] = 'page';
         $queryKeys[] = 'sort_by';
         return $queryKeys;
     }
 
-    public function getQueryType() {
+    public function getQueryType(): string {
         return RainforestClient::REQUEST_TYPE_CATEGORY;
     }
 
@@ -57,7 +57,7 @@ class CategoryRequest extends CommonRequest
      *
      * @return string
      */
-    public function getKeyLong() {
+    public function getKeyLong(): string {
         return $this->url . '~' . $this->sort_by . '~' . $this->page;
     }
 }

@@ -46,14 +46,14 @@ class BestSellersRequest extends CommonRequest
         ];
     }
 
-    public function getQueryKeys() {
+    public function getQueryKeys(): array {
         $queryKeys[] = 'url';
         $queryKeys[] = 'page';
         $queryKeys[] = 'total_pages';
         return $queryKeys;
     }
 
-    public function getQueryType() {
+    public function getQueryType(): string {
         return RainforestClient::REQUEST_TYPE_BEST_SELLER;
     }
 
@@ -62,7 +62,7 @@ class BestSellersRequest extends CommonRequest
      *
      * @return string
      */
-    public function getKeyLong() {
+    public function getKeyLong(): string {
         return $this->url . '~' . $this->page;
     }
 }
