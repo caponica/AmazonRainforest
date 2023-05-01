@@ -58,7 +58,7 @@ class RainforestProduct extends RainforestEntityCommon
         $this->setBbFulType($rfResponse->getBbFulType());
         $this->setBbFulSellerName($rfResponse->getBbFulSellerName());
         $this->setBbPriceCurrency($rfResponse->getBbPriceCurrency());
-        $this->setBbPriceAmount($rfResponse->getBbPriceAmount());
+        $this->setBbPriceAmountFromDecimal($rfResponse->getBbPriceAmount());
 
         // ProductResponse methods that can throw Exceptions:
         try {
@@ -81,6 +81,11 @@ class RainforestProduct extends RainforestEntityCommon
         } catch (\Exception $e) {
             $this->setVolumeCuFt(null);
         }
+    }
+
+    public function setBbPriceAmountFromDecimal(string|float $rawValue): static
+    {
+        return $this->setBbPriceAmount($rawValue);
     }
 
     protected string $marketplace;
@@ -114,7 +119,7 @@ class RainforestProduct extends RainforestEntityCommon
     protected ?string $bbFulType = null;
     protected ?string $bbFulSellerName = null;
     protected string $bbPriceCurrency;
-    protected ?string $bbPriceAmount = null;
+    protected mixed $bbPriceAmount = null;
 
     protected ?string $modelNumber = null;
     protected array $bullets = [];
