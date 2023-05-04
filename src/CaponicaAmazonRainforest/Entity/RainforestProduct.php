@@ -91,7 +91,7 @@ class RainforestProduct extends RainforestEntityCommon
     protected string $marketplace;
 
     protected string $asin;
-    protected string $parentAsin;
+    protected ?string $parentAsin;
 
     protected ?int $salesRank = null;
     protected ?string $salesRankTlc = null;
@@ -161,7 +161,7 @@ class RainforestProduct extends RainforestEntityCommon
         return $this->parentAsin;
     }
 
-    public function setParentAsin(string $parentAsin): static
+    public function setParentAsin(?string $parentAsin): static
     {
         $this->parentAsin = $parentAsin;
 

@@ -62,12 +62,14 @@ class ProductResponse extends CommonResponse
         }
     }
 
-    public static function getMainKeys() {
+    public static function getMainKeys(): array
+    {
         $keys = parent::getMainKeys();
         $keys[] = self::MAIN_KEY_PRODUCT;
         return $keys;
     }
-    public static function getOccasionalKeys() {
+    public static function getOccasionalKeys(): array
+    {
         return [
             self::MAIN_KEY_ALSO_BOUGHT,
             self::MAIN_KEY_ALSO_VIEWED,
@@ -83,6 +85,15 @@ class ProductResponse extends CommonResponse
             return $valueIfMissing;
         }
         return $this->product[$key];
+    }
+    public function getSpecificationField($key, $valueIfMissing=null) {
+        $specs = $this->getProductField('specifications');
+        foreach ($specs as $spec) {
+            if ($spec['name'] == $key) {
+                return $spec['value'];
+            }
+        }
+        return $valueIfMissing;
     }
 
     public function getAlsoBought() {
@@ -172,8 +183,7 @@ class ProductResponse extends CommonResponse
         if (empty($weight)) {
             return null;
         }
-        $weight = $this->convertWeightStringToPounds($weight);
-        return $weight;
+        return $this->convertWeightStringToPounds($weight);
     }
     /**
      * @return float|int|null
@@ -186,7 +196,7 @@ class ProductResponse extends CommonResponse
 
     protected function extractWeightStringFromDimensions(): ?string
     {
-        $dimensionsString = trim(strtolower($this->getProductField('dimensions')));
+        $dimensionsString = $this->getDimensionsString();
         if (empty($dimensionsString)) {
             return null;
         }
@@ -202,8 +212,9 @@ class ProductResponse extends CommonResponse
      * @return array|null
      * @throws \Exception
      */
-    public function getDimensionsInchesArray() {
-        $dimensionsString = trim(strtolower($this->getProductField('dimensions')));
+    public function getDimensionsInchesArray(): ?array
+    {
+        $dimensionsString = $this->getDimensionsString();
         if (empty($dimensionsString)) {
             return null;
         }
@@ -232,11 +243,25 @@ class ProductResponse extends CommonResponse
         sort($dims);
         return $dims;
     }
+    public function getDimensionsString(): ?string
+    {
+        $dimensionsString = trim(strtolower($this->getProductField('dimensions')));
+        if (!empty($dimensionsString)) {
+            return $dimensionsString;
+        }
+        $dimensionsString = $this->getSpecificationField('Package Dimensions');
+        if (!empty($dimensionsString)) {
+            return $dimensionsString;
+        }
+        return null;
+    }
+
     /**
      * @return string|null
      * @throws \Exception
      */
-    public function getDimensionsInchesString() {
+    public function getDimensionsInchesString(): ?string
+    {
         $dims = $this->getDimensionsInchesArray();
         if (empty($dims)) {
             return null;
@@ -312,23 +337,25 @@ class ProductResponse extends CommonResponse
         return $tlc['category'];
     }
 
-    public function getHasAPlusContent() {
+    public function getHasAPlusContent(): bool
+    {
         $aPlusArray = $this->getProductField('a_plus_content');
         if (empty($aPlusArray)) {
             return false;
         }
         if (!empty($aPlusArray['has_a_plus_content'])) {
-            return false;
+            return true;
         }
         return false;
     }
-    public function getIsAPlusThirdParty() {
+    public function getIsAPlusThirdParty(): bool
+    {
         $aPlusArray = $this->getProductField('a_plus_content');
         if (empty($aPlusArray)) {
             return false;
         }
         if (!empty($aPlusArray['third_party'])) {
-            return false;
+            return true;
         }
         return false;
     }
@@ -343,7 +370,8 @@ class ProductResponse extends CommonResponse
         return null;
     }
 
-    public function getBbIsPrime() {
+    public function getBbIsPrime(): bool
+    {
         $bbArray = $this->getProductField('buybox_winner');
         if (empty($bbArray)) {
             return false;
@@ -353,7 +381,8 @@ class ProductResponse extends CommonResponse
         }
         return false;
     }
-    public function getBbIsConditionNew() {
+    public function getBbIsConditionNew(): bool
+    {
         $bbArray = $this->getProductField('buybox_winner');
         if (empty($bbArray)) {
             return false;
@@ -368,7 +397,7 @@ class ProductResponse extends CommonResponse
     }
     private function getBbAvailabilityField($key) {
         $bbArray = $this->getProductField('buybox_winner');
-        if (empty($bbArray) || empty($bbArray['availability'])) {
+        if (empty($bbArray)) {
             return null;
         }
 
@@ -399,7 +428,7 @@ class ProductResponse extends CommonResponse
             return null;
         }
 
-        if (empty($bbArray['fulfillment']) || empty($bbArray['fulfillment']['type'])) {
+        if (empty($bbArray['fulfillment']['type'])) {
             return null;
         }
 
