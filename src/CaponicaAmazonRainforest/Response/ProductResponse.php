@@ -245,7 +245,10 @@ class ProductResponse extends CommonResponse
     }
     public function getDimensionsString(): ?string
     {
-        $dimensionsString = trim(strtolower($this->getProductField('dimensions')));
+        $dimensionsString = $this->getProductField('dimensions');
+        if (!is_null($dimensionsString)) {
+            $dimensionsString = trim(strtolower($dimensionsString));
+        }
         if (!empty($dimensionsString)) {
             return $dimensionsString;
         }

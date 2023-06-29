@@ -83,7 +83,7 @@ class RainforestProduct extends RainforestEntityCommon
         }
     }
 
-    public function setBbPriceAmountFromDecimal(string|float $rawValue): static
+    public function setBbPriceAmountFromDecimal(string|float|null $rawValue): static
     {
         return $this->setBbPriceAmount($rawValue);
     }
@@ -475,7 +475,7 @@ class RainforestProduct extends RainforestEntityCommon
 
     public function setBbPriceCurrency(?string $bbPriceCurrency): static
     {
-        $this->bbPriceCurrency = $bbPriceCurrency;
+        $this->bbPriceCurrency = $bbPriceCurrency ?: '';
 
         return $this;
     }
@@ -509,8 +509,12 @@ class RainforestProduct extends RainforestEntityCommon
         return $this->bullets;
     }
 
-    public function setBullets(array $bullets): static
+    public function setBullets(?array $bullets): static
     {
+        if (is_null($bullets)) {
+            $bullets = [];
+        }
+
         $this->bullets = $bullets;
 
         return $this;

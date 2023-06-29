@@ -384,15 +384,17 @@ class RainforestClient
 
         $responses = Promise\settle($promiseRequests)->wait();
         foreach ($responses as $key => $response) {
+            $this->logMessage("Working with response $key", LoggerService::DEBUG);
             try {
                 $data = $this->validateResponseAndReturnData($response, $responseClass);
                 $rfResponses[$key] = new $responseClass($data);
             } catch (\Exception $e) {
-                $this->logMessage(print_r($response, true), LoggerService::DEBUG);
+                $this->logMessage('Error validating response', LoggerService::DEBUG);
                 if (isset($response['value']) && $response['value'] instanceof ResponseInterface) {
                     $this->logMessage("Response body: " . $response['value']->getBody(), LoggerService::DEBUG);
                 }
                 $this->logMessage("Could not extract $debugName data from response {$key}. Message: " . $e->getMessage(), LoggerService::ERROR);
+                $this->logMessage(dump($response, 2, true, false), LoggerService::DEBUG);
             }
         }
 
