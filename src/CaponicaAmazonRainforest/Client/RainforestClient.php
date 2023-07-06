@@ -394,7 +394,7 @@ class RainforestClient
                     $this->logMessage("Response body: " . $response['value']->getBody(), LoggerService::DEBUG);
                 }
                 $this->logMessage("Could not extract $debugName data from response {$key}. Message: " . $e->getMessage(), LoggerService::ERROR);
-                $this->logMessage(dump($response, 2, true, false), LoggerService::DEBUG);
+                dump($response);
             }
         }
 
