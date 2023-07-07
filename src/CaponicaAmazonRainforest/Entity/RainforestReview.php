@@ -140,6 +140,11 @@ class RainforestReview
     }
     public function setTitle(?string $value): static
     {
+        // if title begins with "x.0 out of 5 stars" then strip that and trim the remaining value
+        $pregResult = preg_match('/^[0-5]+\.0 out of 5 stars/', $value, $matches);
+        if ($pregResult) {
+            $value = trim(substr($value, strlen($matches[0])));
+        }
         $this->title = $value;
         return $this;
     }
