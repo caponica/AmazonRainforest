@@ -158,14 +158,23 @@ class ProductResponse extends CommonResponse
         }
 
         $weightString = strtolower($weightString);
-        $weightNumber = 1 * trim(substr($weightString, 0, strpos($weightString, ' ')));
-        if (strpos($weightString, ' ounces')) {
+
+        $regexWeight = preg_match('/^[^0-9.]*([0-9.]+) ([^ ]+)$/i', $weightString, $matches);
+        if (!$regexWeight) {
+            throw new \Exception("Could not parse weight string: $weightString");
+        }
+        $weightNumber = (float) $matches[1];
+        if (empty($weightNumber)) {
+            return null;
+        }
+
+        if ('ounces' === $matches[2]) {
             return $weightNumber * self::WEIGHT_CONVERT_OZ_TO_LB;
-        } elseif (strpos($weightString, ' pounds')) {
+        } elseif ('pounds' === $matches[2] || ('lb' === $matches[2])) {
             return $weightNumber;
-        } elseif (strpos($weightString, ' g')) {
+        } elseif ('grams' === $matches[2] || 'g' === $matches[2]) {
             return $weightNumber * self::WEIGHT_CONVERT_G_TO_LB;
-        } elseif (strpos($weightString, ' kg')) {
+        } elseif ('kilograms' === $matches[2] || 'kg' === $matches[2]) {
             return $weightNumber * self::WEIGHT_CONVERT_KG_TO_LB;
         }
         throw new \Exception("Unknown units in weight string: $weightString");
