@@ -34,11 +34,11 @@ class SearchRequest extends CommonRequest
      * If the second parameter is provided then the first parameter is assumed to be the amazon_domain
      * The options parameter is an array using one or more of the keys returned by getOptionKeys()
      *
-     * @param $site_or_url
-     * @param null $search_term
-     * @param array $options
+     * @param string $site_or_url
+     * @param ?string $search_term
+     * @param array<string, mixed> $options
      */
-    public function __construct($site_or_url, $search_term=null, $options=[])
+    public function __construct(string $site_or_url, ?string $search_term=null, array $options=[])
     {
         if (empty($search_term)) {
             $this->url = $site_or_url;
