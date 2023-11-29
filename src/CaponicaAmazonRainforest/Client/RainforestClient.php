@@ -382,7 +382,7 @@ class RainforestClient
             $promiseRequests[$request->getKey()] = $client->getAsync(sprintf('https://api.rainforestapi.com/request?%s', $queryString));
         }
 
-        $responses = Promise\settle($promiseRequests)->wait();
+        $responses = Promise\Utils::settle($promiseRequests)->wait();
         foreach ($responses as $key => $response) {
             $this->logMessage("Working with response $key", LoggerService::DEBUG);
             try {
