@@ -150,7 +150,11 @@ class RainforestSearchResult
 
     public function setRating50FromRating5($rating5): void
     {
-        $this->rating50 = 10 * $rating5;
+        if (empty($rating5)) {
+            $this->setRating50(null);
+            return;
+        }
+        $this->setRating50(10 * $rating5);
     }
 
     public function setBestSellerDetails(array $dataArray): void
@@ -288,8 +292,17 @@ class RainforestSearchResult
         return $this->ratingsTotal;
     }
 
-    public function setRatingsTotal(int $ratingsTotal): static
+    public function setRatingsTotal(int|string $ratingsTotal): static
     {
+        if (is_string($ratingsTotal)) {
+            if (empty($ratingsTotal)) {
+                $ratingsTotal = 0;
+            } elseif (ctype_digit($ratingsTotal)) {
+                $ratingsTotal = (int)$ratingsTotal;
+            } else {
+                throw new \InvalidArgumentException("RatingsTotal must be an integer or a string of digits");
+            }
+        }
         $this->ratingsTotal = $ratingsTotal;
 
         return $this;
