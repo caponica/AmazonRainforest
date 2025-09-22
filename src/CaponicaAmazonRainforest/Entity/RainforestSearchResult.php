@@ -34,6 +34,7 @@ class RainforestSearchResult
 
     protected int $position;
     protected string $title;
+    protected ?string $brand = null;
     protected string $asin;
     protected string $link;
     protected string $image;
@@ -41,6 +42,11 @@ class RainforestSearchResult
     protected ?int $ratingsTotal = null;
     protected ?string $priceCurrency = null;
     protected mixed $priceAmount = null;
+    protected bool $featuredFromOurBrands = false;
+    protected ?string $information = null;
+    protected ?string $recentSales = null;
+    protected ?string $recentViews = null;
+    protected bool $isCarousel = false;
 
     protected bool $isAmazonBrand = false;
     protected bool $isAmazonExclusive = false;
@@ -68,6 +74,27 @@ class RainforestSearchResult
     protected ?string $variant = null;
     protected mixed $priceLowerAmount = null;
     protected mixed $priceUpperAmount = null;
+
+    // Deal object fields
+    protected ?string $dealLink = null;
+    protected ?string $dealText = null;
+    protected ?string $dealBadgeText = null;
+
+    // Climate Pledge Friendly object fields
+    protected ?string $climatePledgeLink = null;
+    protected ?string $climatePledgeText = null;
+    protected ?string $climatePledgeImage = null;
+
+    // Gift Guide object fields
+    protected ?string $giftGuideLink = null;
+    protected ?string $giftGuideBadgeText = null;
+
+    // Carousel object fields
+    protected ?string $carouselTitle = null;
+    protected ?string $carouselSubTitle = null;
+    protected ?bool $carouselSponsored = null;
+    protected ?string $carouselId = null;
+    protected ?int $carouselTotalItems = null;
 
     /**
      * @param array $data       Raw array of data from the API
@@ -99,6 +126,20 @@ class RainforestSearchResult
 
             'rank'                  => 'setRank',
             'variant'               => 'setVariant',
+
+            // New simple fields
+            'brand'                     => 'setBrand',
+            'featured_from_our_brands'  => 'setFeaturedFromOurBrands',
+            'information'               => 'setInformation',
+            'recent_sales'              => 'setRecentSales',
+            'recent_views'              => 'setRecentViews',
+            'is_carousel'               => 'setIsCarousel',
+
+            // Complex object fields
+            'deal'                      => 'setDealDetailsFromArray',
+            'climate_pledge_friendly'   => 'setClimatePledgeDetailsFromArray',
+            'gift_guide'                => 'setGiftGuideDetailsFromArray',
+            'carousel'                  => 'setCarouselDetailsFromArray',
         ];
         foreach ($fields as $dataKey => $setter) {
             if (isset($data[$dataKey])) {
@@ -172,6 +213,35 @@ class RainforestSearchResult
     public function setAmazonChoiceKeywordsFromArray($choiceArray): void
     {
         $this->amazonChoiceKeywords = $choiceArray['keywords'] ?? null;
+    }
+
+    public function setDealDetailsFromArray($dealArray): void
+    {
+        $this->dealLink = $dealArray['link'] ?? null;
+        $this->dealText = $dealArray['text'] ?? null;
+        $this->dealBadgeText = $dealArray['badge_text'] ?? null;
+    }
+
+    public function setClimatePledgeDetailsFromArray($climateArray): void
+    {
+        $this->climatePledgeLink = $climateArray['link'] ?? null;
+        $this->climatePledgeText = $climateArray['text'] ?? null;
+        $this->climatePledgeImage = $climateArray['image'] ?? null;
+    }
+
+    public function setGiftGuideDetailsFromArray($giftArray): void
+    {
+        $this->giftGuideLink = $giftArray['link'] ?? null;
+        $this->giftGuideBadgeText = $giftArray['badge_text'] ?? null;
+    }
+
+    public function setCarouselDetailsFromArray($carouselArray): void
+    {
+        $this->carouselTitle = $carouselArray['title'] ?? null;
+        $this->carouselSubTitle = $carouselArray['sub_title'] ?? null;
+        $this->carouselSponsored = $carouselArray['sponsored'] ?? null;
+        $this->carouselId = $carouselArray['id'] ?? null;
+        $this->carouselTotalItems = $carouselArray['total_items'] ?? null;
     }
 
     public function setPriceDetailsFromArray($priceArray): void
@@ -594,5 +664,142 @@ class RainforestSearchResult
         $this->priceUpperAmount = $priceUpperAmount;
 
         return $this;
+    }
+
+    public function getBrand(): ?string
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?string $brand): static
+    {
+        $this->brand = $brand;
+
+        return $this;
+    }
+
+    public function getFeaturedFromOurBrands(): bool
+    {
+        return $this->featuredFromOurBrands;
+    }
+
+    public function setFeaturedFromOurBrands(bool $featuredFromOurBrands): static
+    {
+        $this->featuredFromOurBrands = $featuredFromOurBrands;
+
+        return $this;
+    }
+
+    public function getInformation(): ?string
+    {
+        return $this->information;
+    }
+
+    public function setInformation(?string $information): static
+    {
+        $this->information = $information;
+
+        return $this;
+    }
+
+    public function getRecentSales(): ?string
+    {
+        return $this->recentSales;
+    }
+
+    public function setRecentSales(?string $recentSales): static
+    {
+        $this->recentSales = $recentSales;
+
+        return $this;
+    }
+
+    public function getRecentViews(): ?string
+    {
+        return $this->recentViews;
+    }
+
+    public function setRecentViews(?string $recentViews): static
+    {
+        $this->recentViews = $recentViews;
+
+        return $this;
+    }
+
+    public function getIsCarousel(): bool
+    {
+        return $this->isCarousel;
+    }
+
+    public function setIsCarousel(bool $isCarousel): static
+    {
+        $this->isCarousel = $isCarousel;
+
+        return $this;
+    }
+
+    public function getDealLink(): ?string
+    {
+        return $this->dealLink;
+    }
+
+    public function getDealText(): ?string
+    {
+        return $this->dealText;
+    }
+
+    public function getDealBadgeText(): ?string
+    {
+        return $this->dealBadgeText;
+    }
+
+    public function getClimatePledgeLink(): ?string
+    {
+        return $this->climatePledgeLink;
+    }
+
+    public function getClimatePledgeText(): ?string
+    {
+        return $this->climatePledgeText;
+    }
+
+    public function getClimatePledgeImage(): ?string
+    {
+        return $this->climatePledgeImage;
+    }
+
+    public function getGiftGuideLink(): ?string
+    {
+        return $this->giftGuideLink;
+    }
+
+    public function getGiftGuideBadgeText(): ?string
+    {
+        return $this->giftGuideBadgeText;
+    }
+
+    public function getCarouselTitle(): ?string
+    {
+        return $this->carouselTitle;
+    }
+
+    public function getCarouselSubTitle(): ?string
+    {
+        return $this->carouselSubTitle;
+    }
+
+    public function getCarouselSponsored(): ?bool
+    {
+        return $this->carouselSponsored;
+    }
+
+    public function getCarouselId(): ?string
+    {
+        return $this->carouselId;
+    }
+
+    public function getCarouselTotalItems(): ?int
+    {
+        return $this->carouselTotalItems;
     }
 }
