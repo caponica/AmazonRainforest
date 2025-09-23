@@ -60,6 +60,25 @@ class RainforestProduct extends RainforestEntityCommon
         $this->setBbPriceCurrency($rfResponse->getBbPriceCurrency());
         $this->setBbPriceAmountFromDecimal($rfResponse->getBbPriceAmount());
 
+        $this->setPromotionsFeature($rfResponse->getPromotionsFeature());
+        $this->setBrand($rfResponse->getBrand());
+        $this->setManufacturer($rfResponse->getManufacturer());
+        $this->setRichProductTitle($rfResponse->getRichProductTitle());
+        $this->setRichProductDescription($rfResponse->getRichProductDescription());
+        $this->setCategoriesFlat($rfResponse->getCategoriesFlat());
+        $this->setVariantAsinsFlat($rfResponse->getVariantAsinsFlat());
+        $this->setDeal($rfResponse->getDeal());
+        $this->setDealBadge($rfResponse->getDealBadge());
+        $this->setProductDealBadgeText($rfResponse->getProductDealBadgeText());
+        $this->setProductDealPercentageOffFromDecimal($rfResponse->getProductDealPercentageOff());
+        $this->setSnsBaseDiscountPercentageFromDecimal($rfResponse->getSnsBaseDiscountPercentage());
+        $this->setSnsTieredDiscountPercentageFromDecimal($rfResponse->getSnsTieredDiscountPercentage());
+        $this->setAmazonsChoiceKeywords($rfResponse->getAmazonsChoiceKeywords());
+        $this->setBestSellerBadgeCategory($rfResponse->getBestSellerBadgeCategory());
+        $this->setBestSellerBadgeBadgeText($rfResponse->getBestSellerBadgeBadgeText());
+        $this->setGiftGuideBadgeText($rfResponse->getGiftGuideBadgeText());
+        $this->setRecentSales($rfResponse->getRecentSales());
+
         // ProductResponse methods that can throw Exceptions:
         try {
             $this->setWeightPounds($rfResponse->getWeightPounds());
@@ -86,6 +105,21 @@ class RainforestProduct extends RainforestEntityCommon
     public function setBbPriceAmountFromDecimal(string|float|null $rawValue): static
     {
         return $this->setBbPriceAmount($rawValue);
+    }
+
+    public function setProductDealPercentageOffFromDecimal(string|float|null $rawValue): static
+    {
+        return $this->setProductDealPercentageOff($rawValue);
+    }
+
+    public function setSnsBaseDiscountPercentageFromDecimal(string|float|null $rawValue): static
+    {
+        return $this->setSnsBaseDiscountPercentage($rawValue);
+    }
+
+    public function setSnsTieredDiscountPercentageFromDecimal(string|float|null $rawValue): static
+    {
+        return $this->setSnsTieredDiscountPercentage($rawValue);
     }
 
     protected string $marketplace;
@@ -131,6 +165,25 @@ class RainforestProduct extends RainforestEntityCommon
     protected int|float|null $weightShippingPounds = null;
     protected ?string $dimensionsInches = null;
     protected int|float|null $volumeCuFt = null;
+
+    protected ?string $promotionsFeature = null;
+    protected ?string $brand = null;
+    protected ?string $manufacturer = null;
+    protected ?string $richProductTitle = null;
+    protected ?string $richProductDescription = null;
+    protected ?string $categoriesFlat = null;
+    protected ?string $variantAsinsFlat = null;
+    protected ?string $deal = null;
+    protected ?string $dealBadge = null;
+    protected ?string $productDealBadgeText = null;
+    protected mixed $productDealPercentageOff = null;
+    protected mixed $snsBaseDiscountPercentage = null;
+    protected mixed $snsTieredDiscountPercentage = null;
+    protected ?string $amazonsChoiceKeywords = null;
+    protected ?string $bestSellerBadgeCategory = null;
+    protected ?string $bestSellerBadgeBadgeText = null;
+    protected ?string $giftGuideBadgeText = null;
+    protected ?string $recentSales = null;
 
     public function getMarketplace(): ?string
     {
@@ -552,6 +605,222 @@ class RainforestProduct extends RainforestEntityCommon
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getPromotionsFeature(): ?string
+    {
+        return $this->promotionsFeature;
+    }
+
+    public function setPromotionsFeature(?string $promotionsFeature): static
+    {
+        $this->promotionsFeature = $promotionsFeature;
+
+        return $this;
+    }
+
+    public function getBrand(): ?string
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?string $brand): static
+    {
+        $this->brand = $brand;
+
+        return $this;
+    }
+
+    public function getManufacturer(): ?string
+    {
+        return $this->manufacturer;
+    }
+
+    public function setManufacturer(?string $manufacturer): static
+    {
+        $this->manufacturer = $manufacturer;
+
+        return $this;
+    }
+
+    public function getRichProductTitle(): ?string
+    {
+        return $this->richProductTitle;
+    }
+
+    public function setRichProductTitle(?string $richProductTitle): static
+    {
+        $this->richProductTitle = $richProductTitle;
+
+        return $this;
+    }
+
+    public function getRichProductDescription(): ?string
+    {
+        return $this->richProductDescription;
+    }
+
+    public function setRichProductDescription(?string $richProductDescription): static
+    {
+        $this->richProductDescription = $richProductDescription;
+
+        return $this;
+    }
+
+    public function getCategoriesFlat(): ?string
+    {
+        return $this->categoriesFlat;
+    }
+
+    public function setCategoriesFlat(?string $categoriesFlat): static
+    {
+        $this->categoriesFlat = $categoriesFlat;
+
+        return $this;
+    }
+
+    public function getVariantAsinsFlat(): ?string
+    {
+        return $this->variantAsinsFlat;
+    }
+
+    public function setVariantAsinsFlat(?string $variantAsinsFlat): static
+    {
+        $this->variantAsinsFlat = $variantAsinsFlat;
+
+        return $this;
+    }
+
+    public function getDeal(): ?string
+    {
+        return $this->deal;
+    }
+
+    public function setDeal(?string $deal): static
+    {
+        $this->deal = $deal;
+
+        return $this;
+    }
+
+    public function getDealBadge(): ?string
+    {
+        return $this->dealBadge;
+    }
+
+    public function setDealBadge(?string $dealBadge): static
+    {
+        $this->dealBadge = $dealBadge;
+
+        return $this;
+    }
+
+    public function getProductDealBadgeText(): ?string
+    {
+        return $this->productDealBadgeText;
+    }
+
+    public function setProductDealBadgeText(?string $productDealBadgeText): static
+    {
+        $this->productDealBadgeText = $productDealBadgeText;
+
+        return $this;
+    }
+
+    public function getProductDealPercentageOff(): mixed
+    {
+        return $this->productDealPercentageOff;
+    }
+
+    public function setProductDealPercentageOff(mixed $productDealPercentageOff): static
+    {
+        $this->productDealPercentageOff = $productDealPercentageOff;
+
+        return $this;
+    }
+
+    public function getSnsBaseDiscountPercentage(): mixed
+    {
+        return $this->snsBaseDiscountPercentage;
+    }
+
+    public function setSnsBaseDiscountPercentage(mixed $snsBaseDiscountPercentage): static
+    {
+        $this->snsBaseDiscountPercentage = $snsBaseDiscountPercentage;
+
+        return $this;
+    }
+
+    public function getSnsTieredDiscountPercentage(): mixed
+    {
+        return $this->snsTieredDiscountPercentage;
+    }
+
+    public function setSnsTieredDiscountPercentage(mixed $snsTieredDiscountPercentage): static
+    {
+        $this->snsTieredDiscountPercentage = $snsTieredDiscountPercentage;
+
+        return $this;
+    }
+
+    public function getAmazonsChoiceKeywords(): ?string
+    {
+        return $this->amazonsChoiceKeywords;
+    }
+
+    public function setAmazonsChoiceKeywords(?string $amazonsChoiceKeywords): static
+    {
+        $this->amazonsChoiceKeywords = $amazonsChoiceKeywords;
+
+        return $this;
+    }
+
+    public function getBestSellerBadgeCategory(): ?string
+    {
+        return $this->bestSellerBadgeCategory;
+    }
+
+    public function setBestSellerBadgeCategory(?string $bestSellerBadgeCategory): static
+    {
+        $this->bestSellerBadgeCategory = $bestSellerBadgeCategory;
+
+        return $this;
+    }
+
+    public function getBestSellerBadgeBadgeText(): ?string
+    {
+        return $this->bestSellerBadgeBadgeText;
+    }
+
+    public function setBestSellerBadgeBadgeText(?string $bestSellerBadgeBadgeText): static
+    {
+        $this->bestSellerBadgeBadgeText = $bestSellerBadgeBadgeText;
+
+        return $this;
+    }
+
+    public function getGiftGuideBadgeText(): ?string
+    {
+        return $this->giftGuideBadgeText;
+    }
+
+    public function setGiftGuideBadgeText(?string $giftGuideBadgeText): static
+    {
+        $this->giftGuideBadgeText = $giftGuideBadgeText;
+
+        return $this;
+    }
+
+    public function getRecentSales(): ?string
+    {
+        return $this->recentSales;
+    }
+
+    public function setRecentSales(?string $recentSales): static
+    {
+        $this->recentSales = $recentSales;
 
         return $this;
     }

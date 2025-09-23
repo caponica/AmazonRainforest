@@ -529,4 +529,146 @@ class ProductResponse extends CommonResponse
     public function getLanguage() {
         return $this->getProductField('language');
     }
+
+    public function getPromotionsFeature() {
+        return $this->getProductField('promotions_feature');
+    }
+
+    public function getBrand() {
+        return $this->getProductField('brand');
+    }
+
+    public function getManufacturer() {
+        return $this->getProductField('manufacturer');
+    }
+
+    public function getCategoriesFlat() {
+        return $this->getProductField('categories_flat');
+    }
+
+    public function getVariantAsinsFlat() {
+        return $this->getProductField('variant_asins_flat');
+    }
+
+    public function getDeal() {
+        return $this->getProductField('deal');
+    }
+
+    public function getDealBadge() {
+        return $this->getProductField('deal_badge');
+    }
+
+    public function getRecentSales() {
+        return $this->getProductField('recent_sales');
+    }
+
+    public function getRichProductTitle() {
+        $richArray = $this->getProductField('rich_product_description');
+        if (empty($richArray) || !is_array($richArray) || empty($richArray[0])) {
+            return null;
+        }
+        if (empty($richArray[0]['title'])) {
+            return null;
+        }
+        return $richArray[0]['title'];
+    }
+
+    public function getRichProductDescription() {
+        $richArray = $this->getProductField('rich_product_description');
+        if (empty($richArray) || !is_array($richArray) || empty($richArray[0])) {
+            return null;
+        }
+        if (empty($richArray[0]['description'])) {
+            return null;
+        }
+        return $richArray[0]['description'];
+    }
+
+    public function getProductDealBadgeText() {
+        $dealArray = $this->getProductField('product_deal');
+        if (empty($dealArray)) {
+            return null;
+        }
+        if (empty($dealArray['badge_text'])) {
+            return null;
+        }
+        return $dealArray['badge_text'];
+    }
+
+    public function getProductDealPercentageOff() {
+        $dealArray = $this->getProductField('product_deal');
+        if (empty($dealArray)) {
+            return null;
+        }
+        if (empty($dealArray['percentage_off'])) {
+            return null;
+        }
+        return $dealArray['percentage_off'];
+    }
+
+    public function getSnsBaseDiscountPercentage() {
+        $snsArray = $this->getProductField('subscribe_and_save');
+        if (empty($snsArray)) {
+            return null;
+        }
+        if (empty($snsArray['base_discount_percentage'])) {
+            return null;
+        }
+        return $snsArray['base_discount_percentage'];
+    }
+
+    public function getSnsTieredDiscountPercentage() {
+        $snsArray = $this->getProductField('subscribe_and_save');
+        if (empty($snsArray)) {
+            return null;
+        }
+        if (empty($snsArray['tiered_discount_percentage'])) {
+            return null;
+        }
+        return $snsArray['tiered_discount_percentage'];
+    }
+
+    public function getAmazonsChoiceKeywords() {
+        $choiceArray = $this->getProductField('amazons_choice');
+        if (empty($choiceArray)) {
+            return null;
+        }
+        if (empty($choiceArray['keywords'])) {
+            return null;
+        }
+        return $choiceArray['keywords'];
+    }
+
+    public function getBestSellerBadgeCategory() {
+        $badgeArray = $this->getProductField('bestseller_badge');
+        if (empty($badgeArray)) {
+            return null;
+        }
+        if (empty($badgeArray['category'])) {
+            return null;
+        }
+        return $badgeArray['category'];
+    }
+
+    public function getBestSellerBadgeBadgeText() {
+        $badgeArray = $this->getProductField('bestseller_badge');
+        if (empty($badgeArray)) {
+            return null;
+        }
+        if (empty($badgeArray['badge_text'])) {
+            return null;
+        }
+        return $badgeArray['badge_text'];
+    }
+
+    public function getGiftGuideBadgeText() {
+        $giftArray = $this->getProductField('gift_guide_badge');
+        if (empty($giftArray)) {
+            return null;
+        }
+        if (empty($giftArray['text'])) {
+            return null;
+        }
+        return $giftArray['text'];
+    }
 }
