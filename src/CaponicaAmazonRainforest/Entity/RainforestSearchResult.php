@@ -2,9 +2,6 @@
 
 namespace CaponicaAmazonRainforest\Entity;
 
-use CaponicaAmazonRainforest\Response\CommonResponse;
-use CaponicaAmazonRainforest\Response\ReviewResponse;
-
 /**
  * A child object which lives under RainforestSearch or RainforestBestSellers. Represents a single "hit" in the Search results.
  * Note that some fields are only available from Search, some only from BestSellers
@@ -743,9 +740,23 @@ class RainforestSearchResult
         return $this->dealLink;
     }
 
+    public function setDealLink(?string $dealLink): static
+    {
+        $this->dealLink = $dealLink;
+
+        return $this;
+    }
+
     public function getDealText(): ?string
     {
         return $this->dealText;
+    }
+
+    public function setDealText(?string $dealText): static
+    {
+        $this->dealText = $dealText;
+
+        return $this;
     }
 
     public function getDealBadgeText(): ?string
@@ -753,9 +764,23 @@ class RainforestSearchResult
         return $this->dealBadgeText;
     }
 
+    public function setDealBadgeText(?string $dealBadgeText): static
+    {
+        $this->dealBadgeText = $dealBadgeText;
+
+        return $this;
+    }
+
     public function getClimatePledgeLink(): ?string
     {
         return $this->climatePledgeLink;
+    }
+
+    public function setClimatePledgeLink(?string $climatePledgeLink): static
+    {
+        $this->climatePledgeLink = $climatePledgeLink;
+
+        return $this;
     }
 
     public function getClimatePledgeText(): ?string
@@ -763,9 +788,23 @@ class RainforestSearchResult
         return $this->climatePledgeText;
     }
 
+    public function setClimatePledgeText(?string $climatePledgeText): static
+    {
+        $this->climatePledgeText = $climatePledgeText;
+
+        return $this;
+    }
+
     public function getClimatePledgeImage(): ?string
     {
         return $this->climatePledgeImage;
+    }
+
+    public function setClimatePledgeImage(?string $climatePledgeImage): static
+    {
+        $this->climatePledgeImage = $climatePledgeImage;
+
+        return $this;
     }
 
     public function getGiftGuideLink(): ?string
@@ -773,9 +812,23 @@ class RainforestSearchResult
         return $this->giftGuideLink;
     }
 
+    public function setGiftGuideLink(?string $giftGuideLink): static
+    {
+        $this->giftGuideLink = $giftGuideLink;
+
+        return $this;
+    }
+
     public function getGiftGuideBadgeText(): ?string
     {
         return $this->giftGuideBadgeText;
+    }
+
+    public function setGiftGuideBadgeText(?string $giftGuideBadgeText): static
+    {
+        $this->giftGuideBadgeText = $giftGuideBadgeText;
+
+        return $this;
     }
 
     public function getCarouselTitle(): ?string
@@ -783,9 +836,23 @@ class RainforestSearchResult
         return $this->carouselTitle;
     }
 
+    public function setCarouselTitle(?string $carouselTitle): static
+    {
+        $this->carouselTitle = $carouselTitle;
+
+        return $this;
+    }
+
     public function getCarouselSubTitle(): ?string
     {
         return $this->carouselSubTitle;
+    }
+
+    public function setCarouselSubTitle(?string $carouselSubTitle): static
+    {
+        $this->carouselSubTitle = $carouselSubTitle;
+
+        return $this;
     }
 
     public function getCarouselSponsored(): ?bool
@@ -793,13 +860,34 @@ class RainforestSearchResult
         return $this->carouselSponsored;
     }
 
+    public function setCarouselSponsored(?bool $carouselSponsored): static
+    {
+        $this->carouselSponsored = $carouselSponsored;
+
+        return $this;
+    }
+
     public function getCarouselId(): ?string
     {
         return $this->carouselId;
     }
 
+    public function setCarouselId(?string $carouselId): static
+    {
+        $this->carouselId = $carouselId;
+
+        return $this;
+    }
+
     public function getCarouselTotalItems(): ?int
     {
         return $this->carouselTotalItems;
+    }
+
+    public function setCarouselTotalItems(?int $carouselTotalItems): static
+    {
+        $this->carouselTotalItems = $carouselTotalItems;
+
+        return $this;
     }
 }
