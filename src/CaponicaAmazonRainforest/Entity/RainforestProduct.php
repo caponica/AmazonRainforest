@@ -734,9 +734,9 @@ class RainforestProduct extends RainforestEntityCommon
         return $this->productDealPercentageOff;
     }
 
-    public function setProductDealPercentageOff(mixed $productDealPercentageOff): static
+    public function setProductDealPercentageOff(int|float|string|null $productDealPercentageOff): static
     {
-        $this->productDealPercentageOff = $productDealPercentageOff;
+        $this->productDealPercentageOff = $productDealPercentageOff * 1;
 
         return $this;
     }
@@ -746,9 +746,9 @@ class RainforestProduct extends RainforestEntityCommon
         return $this->snsBaseDiscountPercentage;
     }
 
-    public function setSnsBaseDiscountPercentage(mixed $snsBaseDiscountPercentage): static
+    public function setSnsBaseDiscountPercentage(int|float|string|null $snsBaseDiscountPercentage): static
     {
-        $this->snsBaseDiscountPercentage = $snsBaseDiscountPercentage;
+        $this->snsBaseDiscountPercentage = $snsBaseDiscountPercentage * 1;
 
         return $this;
     }
@@ -758,9 +758,9 @@ class RainforestProduct extends RainforestEntityCommon
         return $this->snsTieredDiscountPercentage;
     }
 
-    public function setSnsTieredDiscountPercentage(mixed $snsTieredDiscountPercentage): static
+    public function setSnsTieredDiscountPercentage(int|float|string|null $snsTieredDiscountPercentage): static
     {
-        $this->snsTieredDiscountPercentage = $snsTieredDiscountPercentage;
+        $this->snsTieredDiscountPercentage = $snsTieredDiscountPercentage * 1;
 
         return $this;
     }
