@@ -94,27 +94,30 @@ class RainforestCollectionClient
     }
 
     /**
-     * Takes the page count from page 1 itself, and refuses an inconsistent answer: a page count of 0 while requests
-     * exist would make add re-add every schedule and remove unlink schedules whose requests stay live
+     * Takes the total from the Collection itself (an empty Collection lists as empty without calling the requests
+     * endpoint, which answers HTTP 500 for it) and the page count from page 1, and refuses an inconsistent answer: a
+     * short listing would make add re-add every schedule and remove unlink schedules whose requests stay live
      * @return list<RainforestCollectionRequest>
      */
     public function fetchAllRequests(string $collectionId): array
     {
-        $firstPage = $this->callApi('GET', "/collections/$collectionId/requests/1");
-        $collection = new RainforestCollection(['id' => $collectionId] + $firstPage);
-        $pageCount = $collection->getRequestsPageCount();
-        $total = $collection->getRequestsTotalCount();
-        $requests = $this->buildRequests($firstPage);
-        $firstPageCount = count($requests);
-        $consistent = !(0 === $pageCount && (0 < $total || 0 < $firstPageCount))
-            && !(self::MAX_REQUESTS_PER_ADD <= $firstPageCount && 1 >= $pageCount)
-            && !($pageCount < (int) ceil($total / self::MAX_REQUESTS_PER_ADD));
-        if (!$consistent) {
-            throw new RainforestCollectionException("Collection $collectionId request listing is inconsistent: total $total, page count $pageCount, $firstPageCount on page 1");
+        $total = $this->fetchCollection($collectionId)->getRequestsTotalCount();
+        if (0 === $total) {
+            return [];
         }
 
+        $firstPage = $this->callApi('GET', "/collections/$collectionId/requests/1");
+        $pageCount = (new RainforestCollection(['id' => $collectionId] + $firstPage))->getRequestsPageCount();
+        if (0 === $pageCount || $pageCount < (int) ceil($total / self::MAX_REQUESTS_PER_ADD)) {
+            throw new RainforestCollectionException("Collection $collectionId request listing is inconsistent: total $total, page count $pageCount");
+        }
+
+        $requests = $this->buildRequests($firstPage);
         for ($page = 2; $page <= $pageCount; $page++) {
             array_push($requests, ...$this->fetchRequestsPage($collectionId, $page));
+        }
+        if (count($requests) < $total) {
+            throw new RainforestCollectionException("Collection $collectionId request listing is inconsistent: total $total, only " . count($requests) . " listed across $pageCount page(s)");
         }
 
         return $requests;
