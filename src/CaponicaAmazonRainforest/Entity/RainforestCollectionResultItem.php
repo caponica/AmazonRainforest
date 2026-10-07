@@ -5,14 +5,15 @@ namespace CaponicaAmazonRainforest\Entity;
 use CaponicaAmazonRainforest\Exception\RainforestCollectionException;
 
 /**
- * The only place that knows a Collection result line's shape. Written against the published docs until a
- * real result page is pinned as a fixture: accepts a plain Product Data API response, or a
- * {success, result, request} wrapper.
+ * The only place that knows a Collection result line's shape: the wrapper observed on a real result page,
+ * {success, id, request, total_time_taken, result}. result holds request_parameters, request_metadata and
+ * product but no request_info, so one is built from the wrapper's success flag.
  */
 class RainforestCollectionResultItem
 {
     private const REQUIRED_RESPONSE_KEYS = ['request_info', 'request_metadata', 'request_parameters', 'product'];
-    private const KNOWN_WRAPPER_KEYS = ['id', 'success', 'request', 'result'];
+    // total_time_taken is also in result.request_metadata, so the wrapper's copy is ignored
+    private const KNOWN_WRAPPER_KEYS = ['id', 'success', 'request', 'total_time_taken', 'result'];
     // rf:sp treats a response without a product as one failed request (e.g. a delisted ASIN), so a page does the same
     private const NO_PRODUCT_MESSAGE = 'Response reported success but has no product';
 
@@ -55,9 +56,6 @@ class RainforestCollectionResultItem
         if (array_key_exists('success', $data) && array_key_exists('result', $data)) {
             return self::fromWrapper($data);
         }
-        if (array_key_exists('request_info', $data)) {
-            return self::fromPlainResponse($data);
-        }
 
         throw new RainforestCollectionException('Unrecognised result line structure, top-level keys: ' . implode(',', array_keys($data)));
     }
@@ -86,21 +84,11 @@ class RainforestCollectionResultItem
             return new self($data, false, null, $customId, self::NO_PRODUCT_MESSAGE);
         }
         $result['request_parameters'] = array_merge($request, $result['request_parameters'] ?? []);
+        if (!isset($result['request_info'])) {
+            $result['request_info'] = ['success' => (bool) $data['success']];
+        }
 
         return new self($data, true, self::validateResponse($result), $customId, null);
-    }
-
-    private static function fromPlainResponse(array $data): self
-    {
-        $customId = isset($data['request_parameters']['custom_id']) ? (string) $data['request_parameters']['custom_id'] : null;
-        if (empty($data['request_info']['success'])) {
-            return new self($data, false, null, $customId, $data['request_info']['message'] ?? null);
-        }
-        if (empty($data['product'])) {
-            return new self($data, false, null, $customId, self::NO_PRODUCT_MESSAGE);
-        }
-
-        return new self($data, true, self::validateResponse($data), $customId, null);
     }
 
     private static function validateResponse(array $response): array
