@@ -7,14 +7,16 @@ use CaponicaAmazonRainforest\Exception\RainforestCollectionException;
 /**
  * The only place that knows a Collection result line's shape: the wrapper observed on a real result page,
  * {success, id, request, total_time_taken, result}. result holds request_parameters, request_metadata and
- * product but no request_info, so one is built from the wrapper's success flag.
+ * product but no request_info, so one is built from the wrapper's success flag. A request whose product is not
+ * found also reports success, with result.message in place of product.
  */
 class RainforestCollectionResultItem
 {
     private const REQUIRED_RESPONSE_KEYS = ['request_info', 'request_metadata', 'request_parameters', 'product'];
     // total_time_taken is also in result.request_metadata, so the wrapper's copy is ignored
     private const KNOWN_WRAPPER_KEYS = ['id', 'success', 'request', 'total_time_taken', 'result'];
-    // rf:sp treats a response without a product as one failed request (e.g. a delisted ASIN), so a page does the same
+    // rf:sp treats a response without a product as one failed request (e.g. a delisted ASIN), so a page does the same;
+    // used when result.message does not say why
     private const NO_PRODUCT_MESSAGE = 'Response reported success but has no product';
 
     private array $line;
@@ -81,7 +83,8 @@ class RainforestCollectionResultItem
             throw new RainforestCollectionException('Successful result line has no result object');
         }
         if (empty($result['product'])) {
-            return new self($data, false, null, $customId, self::NO_PRODUCT_MESSAGE);
+            $message = !empty($result['message']) && is_string($result['message']) ? $result['message'] : self::NO_PRODUCT_MESSAGE;
+            return new self($data, false, null, $customId, $message);
         }
         $result['request_parameters'] = array_merge($request, $result['request_parameters'] ?? []);
         if (!isset($result['request_info'])) {
