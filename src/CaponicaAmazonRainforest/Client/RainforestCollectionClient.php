@@ -96,12 +96,17 @@ class RainforestCollectionClient
     /**
      * Takes the total from the Collection itself (an empty Collection lists as empty without calling the requests
      * endpoint, which answers HTTP 500 for it) and the page count from page 1, and refuses an inconsistent answer: a
-     * short listing would make add re-add every schedule and remove unlink schedules whose requests stay live
+     * short listing would make add re-add every schedule and remove unlink schedules whose requests stay live. A
+     * Collection without a total is refused rather than read as empty for the same reason
      * @return list<RainforestCollectionRequest>
      */
     public function fetchAllRequests(string $collectionId): array
     {
-        $total = $this->fetchCollection($collectionId)->getRequestsTotalCount();
+        $collection = $this->fetchCollection($collectionId);
+        if (!$collection->hasRequestsTotalCount()) {
+            throw new RainforestCollectionException("Collection $collectionId response has no requests_total_count, so its requests cannot be listed");
+        }
+        $total = $collection->getRequestsTotalCount();
         if (0 === $total) {
             return [];
         }

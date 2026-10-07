@@ -31,6 +31,11 @@ class RainforestCollection
         return in_array($this->getStatus(), ['queued', 'running'], true);
     }
 
+    public function hasRequestsTotalCount(): bool
+    {
+        return isset($this->data['requests_total_count']) || isset($this->data['request_total_count']);
+    }
+
     public function getRequestsTotalCount(): int
     {
         return (int) ($this->data['requests_total_count'] ?? $this->data['request_total_count'] ?? 0);

@@ -76,7 +76,7 @@ class RainforestCollectionResultItem
         $result = $data['result'];
 
         if (empty($data['success'])) {
-            $message = is_array($result) ? ($result['request_info']['message'] ?? null) : null;
+            $message = is_array($result) ? ($result['request_info']['message'] ?? $result['message'] ?? null) : null;
             return new self($data, false, null, $customId, $message);
         }
         if (!is_array($result)) {
