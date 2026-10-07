@@ -41,6 +41,20 @@ abstract class CommonRequest implements CommonRequestInterface
     }
 
     /**
+     * The request as a Collection item: buildQueryArray() without the api_key, plus custom_id when given
+     */
+    public function buildCollectionRequestArray(?string $customId = null): array
+    {
+        $requestArray = $this->buildQueryArray('');
+        unset($requestArray['api_key']);
+        if (!is_null($customId)) {
+            $requestArray['custom_id'] = $customId;
+        }
+
+        return $requestArray;
+    }
+
+    /**
      * A unique key for this ProductRequest
      *
      * @return string
