@@ -31,6 +31,24 @@ class RainforestCollection
         return in_array($this->getStatus(), ['queued', 'running'], true);
     }
 
+    public function getScheduleType(): ?string
+    {
+        return $this->data['schedule_type'] ?? null;
+    }
+
+    public function getScheduleMinutes(): ?string
+    {
+        return $this->data['schedule_minutes'] ?? null;
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function getScheduleHours(): array
+    {
+        return array_map('intval', array_values($this->data['schedule_hours'] ?? []));
+    }
+
     public function hasRequestsTotalCount(): bool
     {
         return isset($this->data['requests_total_count']) || isset($this->data['request_total_count']);

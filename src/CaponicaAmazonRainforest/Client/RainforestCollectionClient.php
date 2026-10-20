@@ -68,6 +68,22 @@ class RainforestCollectionClient
         return new RainforestCollection($data['collection']);
     }
 
+    /**
+     * Rainforest refuses the update while the Collection is running. A key sent changes that setting, so an empty
+     * schedule_hours clears the hours filter of a minutes schedule.
+     *
+     * @param array<string, mixed> $params
+     */
+    public function updateCollection(string $collectionId, array $params): RainforestCollection
+    {
+        $data = $this->callApi('PUT', "/collections/$collectionId", ['json' => $params]);
+        if (empty($data['collection']) || !is_array($data['collection'])) {
+            throw new RainforestCollectionException("Unexpected update response for Collection $collectionId, no collection: " . json_encode($data));
+        }
+
+        return new RainforestCollection($data['collection']);
+    }
+
     public function deleteCollection(string $collectionId): void
     {
         $this->callApi('DELETE', "/collections/$collectionId");
